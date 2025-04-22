@@ -8,7 +8,7 @@
     />
     <div class="timeline-item-list">
       <div
-        :class="['timeline-item', !isNavigating || 'slide-fade-up']"
+        class="timeline-item"
         v-for="celeb in celebList"
         :key="celeb.id"
       >
@@ -32,11 +32,8 @@
     <Transition name="timeline" appear>
       <div class="timeline-detail">
         <div
-          :class="[
-            'timeline-detail-item',
-            activeId !== celeb.id ? 'deactive' : '',
-          ]"
-          v-for="celeb in timelineDetails"
+          class="timeline-detail-item"
+          v-for="celeb in personStore.personList"
           :key="celeb.id"
           @click="activeId = celeb.id"
         >
@@ -110,7 +107,6 @@ const goNext = () => {
   setTimeout(() => {
     isNavigating.value = false;
     handleNavigate(celebList.value[2].id, getThreeElementsAfterIndex);
-    replayCard();
   }, 1500);
 };
 
@@ -122,7 +118,6 @@ const goPrevious = () => {
   setTimeout(() => {
     isNavigating.value = false;
     handleNavigate(celebList.value[0].id, getThreeElementsBeforeIndex);
-    replayCard();
   }, 1500);
 };
 
@@ -142,7 +137,6 @@ watch(activeId, (newActiveId) => {
       personStore.personList,
       currentIndex
     );
-    replayCard();
   }
 });
 
@@ -151,11 +145,6 @@ const handleNavigate = (id, callback) => {
   const currentIndex = personStore.personList.findIndex((el) => el.id === id);
   celebList.value = callback(personStore.personList, currentIndex);
 };
-function replayCard() {
-  celebRef.value.map((ref) => {
-    ref.triggerAnimation();
-  });
-}
 </script>
 
 <style lang="scss" scoped>
@@ -275,8 +264,4 @@ function replayCard() {
   opacity: 0;
   transform: translateY(-100%);
 }
-
-// .timeline-leave-active {
-//   position: absolute;
-// }
 </style>

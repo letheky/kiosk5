@@ -1,5 +1,5 @@
 <template>
-  <div class="celeb-card" ref="cardEl">
+  <div class="celeb-card">
     <div class="scroll-container">
       <img
         class="rolling-paper-top"
@@ -9,9 +9,7 @@
       <div class="scroll-texture">
         <img src="/image/home/vignettetop.png" alt="" />
         <h1>{{ name }}</h1>
-        <Button dynamicClass="btn-home" @click="startAnimation"
-          >Tìm hiểu</Button
-        >
+        <Button dynamicClass="btn-home" :path="{ name: 'detail', params: { id } }">Tìm hiểu</Button>
         <img src="/image/home/vignettebot.png" alt="" />
       </div>
       <img
@@ -24,7 +22,6 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
 import Button from "@/components/Button.vue";
 
 const props = defineProps({
@@ -41,22 +38,6 @@ const props = defineProps({
     default: false,
   },
 });
-
-// 1) grab the DOM element
-const cardEl = ref(null);
-
-// 2) reset & replay the slideIn animation
-function triggerAnimation() {
-  const el = cardEl.value;
-  if (!el) return;
-  el.style.animation = "none";
-  // force reflow so the browser “forgets” the old animation
-  void el.offsetWidth;
-  el.style.animation = "slideIn 1s ease-in-out forwards";
-}
-
-// 3) make it callable by parent via $refs
-defineExpose({ triggerAnimation });
 </script>
 
 <style lang="scss">
@@ -136,24 +117,6 @@ defineExpose({ triggerAnimation });
         }
       }
     }
-  }
-}
-
-@keyframes slideUp {
-  0% {
-    height: 70%;
-  }
-  100% {
-    height: 85%;
-  }
-}
-
-@keyframes slideDown {
-  0% {
-    height: 85%;
-  }
-  100% {
-    height: 70%;
   }
 }
 </style>
