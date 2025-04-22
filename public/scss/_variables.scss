@@ -1,0 +1,108 @@
+// Color variables
+$primary-color: #1F1B13;
+$secondary-color: #78590C;
+$thirdary-color: #9DAF9B;
+$tertiary-color: #BAC3A8;
+
+$light-color:#FFF0F2;
+$dark-color: #070605;
+$light-dark-color:#1F1B13;
+$heading-color:#3A071E;
+
+$text-family: "Myriad-pro-light",
+Helvetica,
+sans-serif;
+$primary-heading-family: "Ong-do-gia",
+Helvetica,
+sans-serif;
+$heading-family: "Myriad-pro-semibold",
+Helvetica,
+sans-serif;
+$small-heading-family: "Myriad-pro",
+Helvetica,
+sans-serif;
+// Theme variables
+
+$drop-shadown: 0px 0px 6rem 2rem rgba(0, 0, 0, 0.16);
+$media-4-5-schemes-4-5-on-background: rgba(31, 27, 19, 1);
+$media-4-5-schemes-4-5-on-primary: rgba(255, 255, 255, 1);
+$media-4-5-schemes-4-5-surface-dim: rgba(227, 217, 204, 1);
+$text-style-title-large-font-size: 20rem;
+$text-style-title-large-font-style: normal;
+$text-style-title-large-font-weight: 400;
+$text-style-title-large-letter-spacing: 0px;
+$text-style-title-large-line-height: 120%;
+
+//Option2
+
+/* Fonts */
+$Text-style-title-large: "Myriad-pro";
+$font-utm-ong-do-gia: "Ong-do-gia";
+
+/* font sizes */
+$Text-style-body-medium-size: 10rem;
+$Text-style-label-large-size: 12rem;
+$font-size-37xl: 14rem;
+$font-size-46xl-7: 16.425rem;
+$Text-style-title-large-size: 20.75rem;
+$font-size-179xl-8: 49.7rem;
+$font-size-225xl: 61rem;
+$font-size-281xl: 75rem;
+
+/* Colors */
+$color-black: #000;
+$color-gray-100: #070605;
+
+/* Gaps */
+$gap-0: 0rem;
+$gap-5xs: 2rem;
+$gap-base: 4rem;
+$gap-xl: 5rem;
+$gap-29xl: 12rem;
+$gap-32xl-3: 12.825rem;
+$gap-46xl: 16.25rem;
+$gap-112xl: 32.75rem;
+
+/* Paddings */
+$padding-10xs-7: 0.675rem;
+$padding-7xs: 1.5rem;
+$padding-5xs: 2rem;
+$padding-4xs: 2.25rem;
+$padding-sm: 3.5rem;
+$padding-xl: 5rem;
+$padding-5xl: 6rem;
+$padding-14xl-2: 8.3rem;
+$padding-15xl-4: 8.6rem;
+$padding-29xl: 12rem;
+$padding-30xl: 12.25rem;
+$padding-125xl-7: 36.175rem;
+$padding-140xl-7: 39.925rem;
+$padding-141xl-5: 40.125rem;
+$padding-773xl-5: 198.125rem;
+$padding-799xl: 204.5rem;
+
+/* Figma Variables */
+
+/* Color Variables */
+$Schemes-45-On-Background: #1f1b13;
+$Schemes-45-On-Primary: #fff;
+$Schemes-45-Primary: #78590c;
+$Schemes-45-Surface: #fff8f2;
+$Schemes-45-Surface-Dim: #e3d9cc;
+
+/* Number Variables */
+$Space-3: 6rem;
+$Space-5: 10rem;
+$Medium: 10rem;
+$Large: 20rem;
+
+
+/* Priority display */
+$priority-one: 1;
+$priority-two: 2;
+$priority-three: 3;
+$priority-four: 4;
+$priority-medium: 9;
+$priority-high: 99;
+$priority-super: 999;
+$priority-max: 9999;
