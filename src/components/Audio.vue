@@ -2,7 +2,7 @@
   <div class="player">
     <!-- Play/Pause Button -->
     <div class="play-button" @click="togglePlay">
-      <Transition name="fade" >
+      <Transition name="fade">
         <template v-if="isPlaying">
           <img src="/image/pause-circle-rounded.svg" alt="" />
         </template>
@@ -38,7 +38,8 @@
       loop
     >
       <!-- Replace this with your actual audio file source -->
-      <source :src="resolvedAudioSrc" type="audio/mp3" />
+      <!-- <source :src="resolvedAudioSrc" type="audio/mp3" /> -->
+      <source src="/audio/music.mp3" type="audio/mp3" />
     </audio>
   </div>
 </template>
@@ -138,15 +139,16 @@ $unplayed-color: #e7d7cf; // Your current track color
 
 .player {
   display: flex;
-  width: 50%;
+  width: 100%;
   height: 12rem;
-  align-items: center;
+  margin-top: 2rem;
   gap: 1rem;
+
   .play-button {
     img {
       width: 8rem;
       position: absolute;
-      top:75%;
+      top: 85%;
     }
   }
 

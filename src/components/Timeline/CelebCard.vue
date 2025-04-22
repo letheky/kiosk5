@@ -9,7 +9,11 @@
       <div class="scroll-texture">
         <img src="/image/home/vignettetop.png" alt="" />
         <h1>{{ name }}</h1>
-        <Button dynamicClass="btn-home" :path="{ name: 'detail', params: { id } }">Tìm hiểu</Button>
+        <Button
+          dynamicClass="btn-home"
+          :path="{ name: 'detail', params: { id } }"
+          >Tìm hiểu</Button
+        >
         <img src="/image/home/vignettebot.png" alt="" />
       </div>
       <img
@@ -62,16 +66,14 @@ const props = defineProps({
       bottom: 12%;
       left: 3%;
       width: 90%;
-      z-index: 11110;
-      transition: opacity 0.5s ease-in-out;
+      z-index: $priority-max;
     }
 
     .rolling-paper-bottom {
       position: absolute;
       top: 12%;
       left: 3%;
-      /* transform: translateX(-50%); */
-      z-index: 11110;
+      z-index: $priority-max;
       width: 90%;
     }
 

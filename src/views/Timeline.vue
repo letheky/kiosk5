@@ -7,11 +7,7 @@
       @click="goPrevious"
     />
     <div class="timeline-item-list">
-      <div
-        class="timeline-item"
-        v-for="celeb in celebList"
-        :key="celeb.id"
-      >
+      <div class="timeline-item" v-for="celeb in celebList" :key="celeb.id">
         <CelebCard
           ref="celebRef"
           :id="celeb.id"
@@ -235,33 +231,5 @@ const handleNavigate = (id, callback) => {
       }
     }
   }
-}
-.slide-fade-up {
-  animation: slide-fade-up 1s ease-in-out both;
-  // transform: translate3d(0, 0, 0);
-}
-
-@keyframes slide-fade-up {
-  0% {
-    transform: translateY(0);
-    opacity: 1;
-  }
-
-  100% {
-    transform: translateY(-100%);
-    opacity: 0;
-  }
-}
-
-.timeline-move,
-.timeline-enter-active,
-.timeline-leave-active {
-  transition: all 1.5s ease-in-out;
-}
-
-.timeline-enter-from,
-.timeline-leave-to {
-  opacity: 0;
-  transform: translateY(-100%);
 }
 </style>
