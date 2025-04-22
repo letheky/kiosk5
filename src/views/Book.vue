@@ -1,22 +1,84 @@
 <template>
   <div class="book-shelf">
-    <img src="/image/book/book-shelf.png" alt="" />
+    <div v-if="selectedOption === '3'" style="height: 100%">
+      <VideoModal :close="closeVideo" />
+    </div>
+    <!-- <img src="/image/book/book-shelf.png" alt="" /> -->
+    <div class="media-content">
+      <div v-if="selectedOption === '1'">
+        <Swiper
+          :slides-per-view="3"
+          navigation
+          :modules="[Navigation]"
+          class="media-swiper"
+        >
+          <SwiperSlide
+            v-for="(el, index) in book"
+            :key="index"
+            class="media-slide"
+          >
+            <img
+              class="book-shelf-item"
+              :src="el.thumbnail"
+              alt=""
+              @click="openBookDetail(book, index)"
+            />
+          </SwiperSlide>
+        </Swiper>
+      </div>
+      <div v-else-if="selectedOption === '2'">
+        <Swiper
+          :slides-per-view="3"
+          :navigation="{
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev',
+          }"
+          :modules="[Navigation]"
+          class="media-swiper"
+        >
+          <SwiperSlide
+            v-for="(el, index) in album"
+            :key="index"
+            class="media-slide"
+          >
+            <img
+              class="book-shelf-album"
+              :src="el.image_list[0]"
+              alt=""
+              @click="openAlbumDetail(el, index)"
+            />
+          </SwiperSlide>
+        </Swiper>
+        <div class="swiper-button-prev">
+          <img class="nav-icon-left" src="/image/splash-left.svg" alt="" />
+        </div>
+        <div class="swiper-button-next">
+          <img class="nav-icon-right" src="/image/splash-right.svg" alt="" />
+        </div>
+      </div>
+    </div>
     <div class="book-shelf-content">
       <div class="radio-group">
         <RadioBtn
           id="1"
-          optionText="Tác phẩm của nhân vật"
+          optionText="Ấn phẩm"
           :selectedOption="selectedOption"
           @update:selectedOption="updateSelectedOption"
         />
         <RadioBtn
           id="2"
-          optionText="Tác phẩm về nhân vật"
+          optionText="Hình ảnh"
+          :selectedOption="selectedOption"
+          @update:selectedOption="updateSelectedOption"
+        />
+        <RadioBtn
+          id="3"
+          optionText="Video"
           :selectedOption="selectedOption"
           @update:selectedOption="updateSelectedOption"
         />
       </div>
-      <Transition name="bookshelf-fade">
+      <!-- <Transition name="bookshelf-fade">
         <div v-if="selectedOption === '1'" class="book-shelf__img">
           <Swiper
             :slides-per-view="3"
@@ -77,36 +139,46 @@
             <img class="nav-icon-right" src="/image/splash-right.svg" alt="" />
           </div>
         </div>
-      </Transition>
+      </Transition> -->
     </div>
-    <InkDropButton
-      class="right-ink-btn"
-      text="Giới thiệu"
-      :path="{ name: 'detail', params: { id: personDetailStore.id } }"
-    >
-      <RightIcon color="#fff" />
-    </InkDropButton>
     <Transition name="fade">
       <Modal
-        :modelValue="isBookDetailModal"
-        @update:modelValue="isBookDetailModal = $event"
+        :modelValue="isOpenFlipBook"
+        @update:modelValue="isOpenFlipBook = $event"
       >
-        <BookDetailModal
-          :close="closeBookDetailModal"
-          :selectedBookIndex="selectedBookIndex"
-          :computedDocumentList="computedDocumentList.document_list"
+        <FlipBookHardcode
+          :close="closeFlipBook"
+          :link="book[selectedBookIndex].file"
         />
       </Modal>
     </Transition>
+    <Transition name="fade">
+      <Modal
+        :modelValue="isImageAlbum"
+        @update:modelValue="isImageAlbum = $event"
+      >
+        <AlbumModal
+          :close="closeImageAlbum"
+          :albumList="album[selectedAlbumIndex]"
+        />
+      </Modal>
+    </Transition>
+    <div class="left-ink-btn" @click="handleNavigate">
+      <h3>Quay lại</h3>
+    </div>
   </div>
 </template>
 
 <script>
 import RadioBtn from "@/components/RadioBtn.vue";
 import InkDropButton from "@/components/InkDropButton.vue";
+import CloseIcon from "@/components/icons/CloseIcon.vue";
 import RightIcon from "@/components/icons/RightIcon.vue";
 import Modal from "@/components/Modal.vue";
-import BookDetailModal from "@/components/Book/BookDetailModal.vue";
+import AlbumModal from "@/components/Book/AlbumModal.vue";
+import { book, album, video } from "@/data/book";
+import FlipBookHardcode from "@/components/Book/FlipBookHardcode.vue";
+import VideoModal from "@/components/Book/VideoModal.vue";
 
 import { ref, onMounted, computed, watch } from "vue";
 import { useRoute } from "vue-router";
@@ -125,8 +197,12 @@ export default {
     InkDropButton,
     RightIcon,
     Modal,
+    RightIcon,
     Swiper,
     SwiperSlide,
+    FlipBookHardcode,
+    AlbumModal,
+    VideoModal,
   },
 };
 </script>
@@ -136,9 +212,14 @@ const route = useRoute();
 const store = useStore();
 const personDetailStore = usePersonDetail();
 const {
-  isOpen: isBookDetailModal,
-  open: openBookDetailModal,
-  close: closeBookDetailModal,
+  isOpen: isOpenFlipBook,
+  open: openFlipBook,
+  close: closeFlipBook,
+} = useModal();
+const {
+  isOpen: isImageAlbum,
+  open: openImageAlbum,
+  close: closeImageAlbum,
 } = useModal();
 
 const workOfDocumentlist = ref([]); // Tác phẩm của nhân vật
@@ -146,6 +227,7 @@ const aboutDocumentlist = ref([]); // Tác phẩm về nhân vật
 
 const selectedOption = ref("1");
 const selectedBookIndex = ref(0);
+const selectedAlbumIndex = ref(0);
 
 // Method to update `selectedOption`
 const updateSelectedOption = (value) => {
@@ -162,7 +244,17 @@ const computedDocumentList = computed(() => {
 
 const openBookDetail = (book, index) => {
   selectedBookIndex.value = index;
-  openBookDetailModal();
+  openFlipBook();
+};
+const openAlbumDetail = (album, index) => {
+  selectedAlbumIndex.value = index;
+  openImageAlbum();
+};
+const closeVideo = () => {
+  selectedOption.value = "1";
+};
+const handleNavigate = () => {
+  router.push({ name: "detail", params: { id: route.params.id } });
 };
 </script>
 
@@ -174,6 +266,34 @@ const openBookDetail = (book, index) => {
   background-image: url("/image/yellow-background.png");
   background-repeat: no-repeat;
   background-size: cover;
+  .media-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    height: 40%;
+    .swiper-button-prev,
+    .swiper-button-next {
+      position: absolute;
+      top: 60%;
+      transform: translateY(-50%);
+      z-index: 10;
+      cursor: pointer;
+
+      &::after {
+        display: none; /* Hide default arrows */
+      }
+    }
+    .media-swiper {
+      @include flex-center;
+      margin: 0px 14rem;
+      gap: 5rem;
+      .media-slide {
+        @include flex-center;
+      }
+    }
+  }
 
   > img {
     width: 95%;
@@ -185,17 +305,22 @@ const openBookDetail = (book, index) => {
   }
 
   .book-shelf-content {
-    position: relative;
-    top: 50%;
-    left: 10%;
+    position: absolute;
+    bottom: 5%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60%;
     z-index: 999;
 
     .radio-group {
       font-size: 5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
 
-      div:nth-of-type(1) {
-        margin-bottom: 5rem;
-      }
+      // div:nth-of-type(1) {
+      //   margin-bottom: 5rem;
+      // }
     }
 
     .book-shelf__img {
@@ -254,6 +379,23 @@ const openBookDetail = (book, index) => {
   }
 }
 
+img {
+  width: 15vw;
+}
+img.book-shelf-album {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.left-ink-btn {
+    @include flex-center-vertical;
+    position: absolute;
+    bottom: 5%;
+    right: 3%;
+    h3 {
+      font-size: 4rem;
+    }
+  }
 .bookshelf-fade-enter-active,
 .bookshelf-fade-leave-active {
   transition: opacity 0.5s ease;

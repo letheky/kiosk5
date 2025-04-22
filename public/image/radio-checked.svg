@@ -97,12 +97,5 @@
 <circle cx="61" cy="61" r="30" fill="#231F20"/>
 </g>
 </g>
-<defs>
-<clipPath id="clip0_5025_3554">
-<rect width="120" height="120" fill="white"/>
-</clipPath>
-<clipPath id="clip1_5025_3554">
-<rect width="123.582" height="120" fill="white"/>
-</clipPath>
-</defs>
+
 </svg>

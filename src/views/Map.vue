@@ -18,30 +18,29 @@
     <div class="radio-group">
       <RadioBtn
         id="1"
-        optionText="Nơi thờ tự"
+        optionText="Đường phố"
         :selectedOption="selectedOption"
         @update:selectedOption="updateSelectedOption"
+        color="#BA1A1A"
       />
       <RadioBtn
         id="2"
         optionText="Trường học"
         :selectedOption="selectedOption"
         @update:selectedOption="updateSelectedOption"
+        color="#36693E"
       />
-      <RadioBtn
+      <!-- <RadioBtn
         id="3"
         optionText="Thần sắc, thần phả"
         :selectedOption="selectedOption"
         @update:selectedOption="updateSelectedOption"
-      />
+      /> -->
     </div>
-    <InkDropButtonReverse
-      class="left-ink-btn"
-      text="Quay lại"
-      :path="{ name: 'detail', params: { id: route.params.id } }"
-    >
-      <LeftIcon color="#fff" />
-    </InkDropButtonReverse>
+    <div class="left-ink-btn" @click="handleNavigate">
+      <img src="/image/map/back.svg" />
+      <h3>Quay lại</h3>
+    </div>
     <Transition name="modal-fade">
       <DestinationModal
         v-if="clickedPositionId"
@@ -55,13 +54,12 @@
 </template>
 <script>
 import RadioBtn from "@/components/RadioBtn.vue";
-import InkDropButtonReverse from "@/components/InkDropButtonReverse.vue";
-import LeftIcon from "@/components/icons/LeftIcon.vue";
 import DestinationModal from "@/components/Map/DestinationModal.vue";
 import CustomMarker from "@/components/CustomMarker.vue";
+import { school, road } from "@/data/map";
 
 import { ref, onMounted, computed, watch } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import useStore from "@/store/useStore";
 import usePerson from "@/store/usePerson";
 import { fetchPersonArticle } from "@/api/fetch";
@@ -70,13 +68,13 @@ export default {
   name: "MapDetail",
   components: {
     RadioBtn,
-    InkDropButtonReverse,
     DestinationModal,
     CustomMarker,
   },
 };
 </script>
 <script setup>
+const router = useRouter();
 const route = useRoute();
 const store = useStore();
 const personStore = usePerson();
@@ -90,12 +88,17 @@ const schoolPositionList = ref([]);
 const genealogyPositionList = ref([]);
 
 const activePositionList = computed(() => {
+  // if (selectedOption.value === "1") {
+  //   return inherritedPositionList.value;
+  // } else if (selectedOption.value === "2") {
+  //   return schoolPositionList.value;
+  // } else {
+  //   return genealogyPositionList.value;
+  // }
   if (selectedOption.value === "1") {
-    return inherritedPositionList.value;
-  } else if (selectedOption.value === "2") {
-    return schoolPositionList.value;
+    return road;
   } else {
-    return genealogyPositionList.value;
+    return school;
   }
 });
 
@@ -134,6 +137,11 @@ watch(
     }
   }
 );
+
+// Handle navigate
+const handleNavigate = () => {
+  router.push({ name: "detail", params: { id: route.params.id } });
+};
 </script>
 
 <style lang="scss" scoped>
@@ -168,9 +176,13 @@ watch(
     font-size: 4rem;
   }
   .left-ink-btn {
+    @include flex-center-vertical;
     position: absolute;
-    top: 75%;
-    left: 1%;
+    bottom: 5%;
+    left: 3%;
+    h3 {
+      font-size: 4rem;
+    }
   }
 }
 </style>

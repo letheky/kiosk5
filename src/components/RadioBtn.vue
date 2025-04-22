@@ -2,18 +2,16 @@
   <div>
     <input type="radio" :id="`radio${id}`" :value="id" />
     <label :for="`radio${id}`" class="custom-radio" @click="updateOption">
-      <img
-        v-if="selectedOption === id"
-        src="/image/radio-checked.svg"
-        :alt="optionText"
-      />
-      <img v-else src="/image/radio-uncheck.svg" :alt="optionText" />
+      <CheckedRadio v-if="selectedOption === id" :color="color" />
+      <UncheckedRadio v-else :color="color" />
       <p>{{ optionText }}</p>
     </label>
   </div>
 </template>
 
 <script setup>
+import UncheckedRadio from "@/components/icons/UncheckedRadio.vue";
+import CheckedRadio from "@/components/icons/CheckedRadio.vue";
 const props = defineProps({
   optionText: {
     type: String,
@@ -26,6 +24,9 @@ const props = defineProps({
   id: {
     type: String,
     required: true,
+  },
+  color: {
+    type: String,
   },
 });
 
@@ -50,13 +51,9 @@ input[type="radio"] {
   display: inline-flex;
   align-items: center;
   font-size: inherit;
+  gap: 2rem;
   p {
     font-size: inherit; /* Adjust font size */
-  }
-  & img {
-    width: 10rem; /* Adjust size */
-    height: 10rem;
-    margin-right: 2rem;
   }
 }
 </style>

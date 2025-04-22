@@ -3,13 +3,14 @@
     <div
       class="modal-heading d-flex justify-content-between align-items-center"
     >
-      <h1>{{ destinationDetail.translations[store.lang].name }}</h1>
+      <!-- <h1>{{ destinationDetail.translations[store.lang].name }}</h1> -->
+      <h1>{{ destinationDetail.name }}</h1>
       <img src="/image/close-icon.svg" alt="" @click="$emit('close')" />
     </div>
-    <div
+    <!-- <div
       class="modal-desc"
       v-html="destinationDetail.translations[store.lang].content"
-    ></div>
+    ></div> -->
     <div class="modal-asset">
       <div class="multimedia d-flex justify-content-between align-items-center">
         <div class="asset-media d-flex">
@@ -19,25 +20,25 @@
           >
             Hình ảnh
           </h2>
-          <hr />
-          <h2
+          <!-- <hr /> -->
+          <!-- <h2
             :class="{ active: selectedTab === 'video' }"
             @click="selectedTab = 'video'"
           >
             Video
-          </h2>
+          </h2> -->
         </div>
-        <button
+        <!-- <button
           class="media-360-btn"
           :style="{ opacity: destinationDetail.tourData.length == 0 ? 0.5 : 1 }"
           @click="openModal"
           :disabled="destinationDetail.tourData.length == 0"
         >
           <h3>Tour 360</h3>
-        </button>
+        </button> -->
       </div>
       <div class="asset-list">
-        <Swiper
+        <!-- <Swiper
           :slides-per-view="4"
           space-between="20"
           v-if="selectedTab === 'image'"
@@ -47,16 +48,16 @@
             :key="image.id"
           >
             <!-- <div > -->
-            <!-- <div v-if="!imageLoadStates[index]" class="skeleton-img" /> -->
-            <img
+        <!-- <div v-if="!imageLoadStates[index]" class="skeleton-img" /> -->
+        <!-- <img
               :src="image.thumbnail || image.image"
               alt="Asset"
               @load="handleImageLoaded(index)"
-            />
-            <!-- </div> -->
-          </SwiperSlide>
-        </Swiper>
-        <Swiper
+            /> -->
+        <!-- </div> -->
+        <!-- </SwiperSlide> -->
+        <!-- </Swiper> -->
+        <!-- <Swiper
           :slides-per-view="4"
           space-between="20"
           v-if="selectedTab === 'video'"
@@ -66,14 +67,16 @@
             :key="video.id"
           >
             <!-- <div > -->
-            <!-- <div v-if="!videoLoadStates[index]" class="skeleton-img" /> -->
-            <video :src="video.thumbnail || video.image" />
-            <!-- </div> -->
-          </SwiperSlide>
-        </Swiper>
+        <!-- <div v-if="!videoLoadStates[index]" class="skeleton-img" /> -->
+        <!-- <video :src="video.thumbnail || video.image" /> -->
+        <!-- </div> -->
+        <!-- </SwiperSlide> -->
+        <!-- </Swiper>   -->
+
+        <img :src="destinationDetail.src" alt="" />
       </div>
     </div>
-    <Transition name="fade">
+    <!-- <Transition name="fade">
       <Modal
         v-if="destinationDetail.tourData.length > 0"
         :modelValue="isOpenModal"
@@ -88,16 +91,17 @@
           <CloseIcon color="#fff" />
         </InkDropButton>
       </Modal>
-    </Transition>
+    </Transition> -->
   </div>
 </template>
 
 <script setup>
 import { ref, watch, computed } from "vue";
-import useStore = useStore();
+import useStore from "@/store/useStore";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import InkDropButton from "@/components/InkDropButton.vue";
 import CloseIcon from "@/components/icons/CloseIcon.vue";
+
 import Modal from "@/components/Modal.vue";
 import useModal from "@/composables/useModal";
 
@@ -234,6 +238,13 @@ const handleImageLoaded = (index) => {
           background-size: 200% 100%;
           animation: shimmer 1.5s infinite linear;
         }
+      }
+
+      // fake data
+      img{
+        height: 100%;
+        object-fit: contain;
+        // margin: 0 auto;
       }
     }
   }
