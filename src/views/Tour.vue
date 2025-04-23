@@ -1,5 +1,6 @@
 <template>
   <div class="tour">
+    <h1 class="tour-heading">Thờ tự</h1>
     <Swiper
       :slides-per-view="3"
       navigation
@@ -21,7 +22,7 @@
       </SwiperSlide>
     </Swiper>
     <div class="left-ink-btn" @click="handleNavigate">
-      <img src="/image/map/back-reverse.svg" />
+      <img src="/image/map/back.svg" />
       <h3>Quay lại</h3>
     </div>
     <Transition name="fade">
@@ -54,9 +55,9 @@ const personDetailStore = usePersonDetail();
 const iframeSrc = ref(null);
 
 const computedTourList = computed(() => {
-  const result = personDetailStore.personDetail.tour_folder.reduce(
+  const result = personDetailStore.personDetail.tour_folder[0].tour_list.reduce(
     (acc, curr) => {
-      acc.push(curr.tour_list[0]);
+      acc.push(curr);
       return acc;
     },
     []
@@ -80,6 +81,14 @@ const openDetailTour = (tour) => {
   height: 100%;
   background: url("/image/yellow-background.png") no-repeat center/cover;
   padding: 10rem;
+
+  .tour-heading{
+    font-family: $primary-heading-family;
+    font-size: 16rem;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
   .tour-swiper {
     width: 100%;
     height: 100%;
@@ -115,7 +124,7 @@ const openDetailTour = (tour) => {
     @include flex-center-vertical;
     position: absolute;
     bottom: 5%;
-    right: 3%;
+    left: 3%;
     z-index: $priority-medium;
     img {
       width: 88%;

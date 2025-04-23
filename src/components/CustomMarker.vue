@@ -1,16 +1,28 @@
 <template>
   <div class="parent-element">
-    <div class="rounded-element"></div>
+    <div
+      class="rounded-element"
+      :style="{
+        '--color': `${color}`,
+      }"
+    ></div>
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+defineProps({
+  color: {
+    type: String,
+    default: "#36693e",
+  },
+});
+</script>
 
 <style lang="scss" scoped>
 .rounded-element {
   width: 5rem;
   aspect-ratio: 1 / 1;
-  background-color: #36693e;
+  background-color: var(--color);
   border-radius: 50%;
   position: relative;
   border: 0.3rem solid #fff;
@@ -24,7 +36,7 @@
     left: 50%;
     width: 100%;
     height: 100%;
-    border: 0.3rem solid #36693e;
+    border: 0.3rem solid var(--color);
     border-radius: 50%;
     animation: wave 2s infinite ease-out;
     pointer-events: none; // Prevent pseudo-elements from blocking clicks

@@ -12,7 +12,9 @@
         }"
         @click="showDestinationModal(position)"
       >
-        <CustomMarker />
+        <CustomMarker
+          :color="selectedOption === '1' ? '#BA1A1A' : '#36693E'"
+        />
       </div>
     </TransitionGroup>
     <div class="radio-group">

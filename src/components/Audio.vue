@@ -51,7 +51,7 @@ export default {
 import { ref, onMounted, onBeforeUnmount, computed, watch } from "vue";
 
 const audioRef = ref(null);
-const isPlaying = ref(true);
+const isPlaying = ref(false);
 const currentTime = ref(0);
 const duration = ref(0);
 const resolvedAudioSrc = ref(""); // Resolved audio source

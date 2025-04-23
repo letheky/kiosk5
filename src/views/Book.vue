@@ -2,7 +2,8 @@
   <div class="book-shelf">
     <!-- <img src="/image/book/book-shelf.png" alt="" /> -->
     <div class="media-content">
-      <div v-if="selectedOption === '1'">
+      <div v-if="selectedOption === '1' && computedDocumentList">
+        <h3 class="media-title">Thư viện ấn phẩm</h3>
         <Swiper
           :slides-per-view="3"
           navigation
@@ -21,9 +22,34 @@
               @click="openBookDetail(index)"
             />
           </SwiperSlide>
+          <SwiperSlide
+            v-for="(el, index) in computedDocumentList"
+            :key="index"
+            class="media-slide"
+          >
+            <img
+              class="book-shelf-item"
+              :src="el.thumbnail"
+              alt=""
+              @click="openBookDetail(index)"
+            />
+          </SwiperSlide>
+          <SwiperSlide
+            v-for="(el, index) in computedDocumentList"
+            :key="index"
+            class="media-slide"
+          >
+            <img
+              class="book-shelf-item"
+              :src="el.thumbnail"
+              alt=""
+              @click="openBookDetail(index)"
+            />
+          </SwiperSlide>
         </Swiper>
       </div>
       <div v-else-if="selectedOption === '2'">
+        <h3 class="media-title">Thư viện hình ảnh</h3>
         <Swiper
           :slides-per-view="3"
           :navigation="{
@@ -33,18 +59,29 @@
           :modules="[Navigation]"
           class="media-swiper"
         >
+          <!-- <template    v-for="(image_folder, index) in personDetailStore.personDetail.image_folder"
+            :key="index"> -->
+
           <SwiperSlide
             v-for="(el, index) in personDetailStore.personDetail.image_folder"
             :key="index"
             class="media-slide"
           >
-            <img
-              class="book-shelf-album"
-              :src="el.image || el.thumbnail"
-              alt=""
-              @click="openAlbumDetail(index)"
-            />
+            <div
+              class="d-flex flex-column justify-content-center align-items-center album-image"
+            >
+              <img
+                class="book-shelf-album"
+                :src="
+                  el.image || el.thumbnail || '/image/yellow-background.png'
+                "
+                alt=""
+                @click="openAlbumDetail(index)"
+              />
+              <h3>{{ el.translations[store.lang].name }}</h3>
+            </div>
           </SwiperSlide>
+          <!-- </template> -->
         </Swiper>
         <div class="swiper-button-prev">
           <img class="nav-icon-left" src="/image/splash-left.svg" alt="" />
@@ -54,6 +91,7 @@
         </div>
       </div>
       <div v-else>
+        <h3 class="media-title">Thư viện video</h3>
         <!-- :audioSrc="
           personDetailStore.personDetail.audio_folder[0].audio_list[0]
             .translations[store.lang].file
@@ -72,17 +110,22 @@
             :key="index"
             class="media-slide"
           >
-            <video
-              class="book-shelf-video"
-              alt=""
-              @click="openVideoDetail(index)"
+            <div
+              class="d-flex flex-column justify-content-center align-items-center album-image"
             >
-              Your browser does not support the video tag.
-              <source
-                :src="el.translations[store.lang].file"
-                type="video/mp4"
-              />
-            </video>
+              <video
+                class="book-shelf-video"
+                alt=""
+                @click="openVideoDetail(index)"
+              >
+                Your browser does not support the video tag.
+                <source
+                  :src="el.translations[store.lang].file"
+                  type="video/mp4"
+                />
+              </video>
+              <h3>{{ el.translations[store.lang].name }}</h3>
+            </div>
           </SwiperSlide>
         </Swiper>
         <div class="swiper-button-prev">
@@ -151,7 +194,9 @@
       >
         <VideoModal
           :close="closeVideoAlbum"
-          :name="computedAudiolist[selectedVideoIndex].translations[store.lang].name"
+          :name="
+            computedAudiolist[selectedVideoIndex].translations[store.lang].name
+          "
           :audioSrc="
             computedAudiolist[selectedVideoIndex].translations[store.lang].file
           "
@@ -159,7 +204,7 @@
       </Modal>
     </Transition>
     <div class="left-ink-btn" @click="handleNavigate">
-      <img src="/image/map/back-reverse.svg" />
+      <img src="/image/map/back.svg" />
       <h3>Quay lại</h3>
     </div>
   </div>
@@ -233,17 +278,35 @@ const selectedVideoIndex = ref(0);
 const updateSelectedOption = (value) => {
   selectedOption.value = value;
 };
+// const computedDocumentList = computed(() => {
+//   const totalDocumentList = [
+//     ...(personDetailStore.personDetail.document_folder[0]?.document_list || []),
+//     ...(personDetailStore.personDetail.document_folder[1]?.document_list || []),
+//   ];
+
+//   const newComputedDocumentList = totalDocumentList.filter(
+//     (el) => el.link || el.file
+//   );
+
+//   const extraItem =
+//     personDetailStore.personDetail.document_folder[1]?.document_list?.[4];
+//   if (extraItem) {
+//     newComputedDocumentList.push(extraItem);
+//   }
+
+//   return newComputedDocumentList;
+// });
 
 const computedDocumentList = computed(() => {
   const totalDocumentList = [
-    ...personDetailStore.personDetail.document_folder[0].document_list,
-    ...personDetailStore.personDetail.document_folder[1].document_list,
+    ...personDetailStore.personDetail.document_folder[0]?.document_list,
+    // ...personDetailStore.personDetail.document_folder[1]?.document_list,
   ];
   const newComputedDocumentList = totalDocumentList.filter(
     (el) => el.link || el.file
   );
   newComputedDocumentList.push(
-    personDetailStore.personDetail.document_folder[1].document_list[4]
+    personDetailStore.personDetail.document_folder[0].document_list[4]
   );
   return newComputedDocumentList;
 });
@@ -281,17 +344,23 @@ console.log();
   background-image: url("/image/yellow-background.png");
   background-repeat: no-repeat;
   background-size: cover;
+  .media-title {
+    font-family: $primary-heading-family;
+    font-size: 14rem;
+    text-align: center;
+    margin-bottom: 30rem;
+  }
   .media-content {
     position: absolute;
-    top: 50%;
+    top: 35%;
     left: 50%;
     transform: translate(-50%, -50%);
     width: 90%;
-    height: 40%;
+    height: fit-content;
     .swiper-button-prev,
     .swiper-button-next {
       position: absolute;
-      top: 60%;
+      top: 75%;
       transform: translateY(-50%);
       z-index: 10;
       cursor: pointer;
@@ -306,6 +375,14 @@ console.log();
       gap: 5rem;
       .media-slide {
         @include flex-center;
+      }
+    }
+    .album-image {
+      h3 {
+        text-align: center;
+        font-family: $heading-family;
+        font-size: 3rem;
+        margin-top: 2rem;
       }
     }
   }
@@ -406,7 +483,7 @@ img.book-shelf-album {
   @include flex-center-vertical;
   position: absolute;
   bottom: 5%;
-  right: 3%;
+  left: 3%;
   img {
     width: 88%;
     height: 100%;

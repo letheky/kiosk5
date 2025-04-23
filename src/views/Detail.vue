@@ -79,7 +79,7 @@
           :to="path.path"
           style="color: #fff"
           :class="
-            path.id === activePathId ? 'heading-font' : 'small-heading-font'
+            path.id === activePathId ? 'heading-font link-active' : 'small-heading-font ' 
           "
         >
           {{ path.name }}
@@ -396,5 +396,9 @@ onMounted(async () => {
 }
 .small-heading-font {
   font-family: $small-heading-family;
+  opacity: 0.7;
+}
+.link-active {
+  opacity: 1; font-weight: bold;
 }
 </style>

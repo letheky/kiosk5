@@ -101,14 +101,12 @@ const props = defineProps({
         margin-bottom: 4rem;
       }
       .book-detail-info{
-        
+          font-size: 4rem;
+          width: 50%;
+          text-align: center;
       }
 
-      .book-detail-info {
-        p {
-          font-size: 4rem;
-        }
-      }
+    
     }
   }
 
