@@ -39,7 +39,7 @@
     >
       <!-- Replace this with your actual audio file source -->
       <!-- <source :src="resolvedAudioSrc" type="audio/mp3" /> -->
-      <source src="/audio/music.mp3" type="audio/mp3" />
+      <source src="/audio/test-audio.mp3" type="audio/mp3" />
     </audio>
   </div>
 </template>
@@ -143,6 +143,7 @@ $unplayed-color: #e7d7cf; // Your current track color
   height: 12rem;
   margin-top: 2rem;
   gap: 1rem;
+  align-items: center;
 
   .play-button {
     img {
@@ -155,7 +156,7 @@ $unplayed-color: #e7d7cf; // Your current track color
   .audio-progress-bar {
     position: relative;
     width: 100%;
-    height: 100%;
+    height: 4rem;
     margin-left: 10rem;
 
     .unplayed-audio {
@@ -168,7 +169,7 @@ $unplayed-color: #e7d7cf; // Your current track color
   }
 
   .time-display {
-    font-size: 4rem;
+    font-size: 3rem;
   }
 }
 </style>

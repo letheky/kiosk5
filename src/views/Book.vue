@@ -164,6 +164,7 @@
       </Modal>
     </Transition>
     <div class="left-ink-btn" @click="handleNavigate">
+      <img src="/image/map/back-reverse.svg" />
       <h3>Quay lại</h3>
     </div>
   </div>
@@ -181,7 +182,7 @@ import FlipBookHardcode from "@/components/Book/FlipBookHardcode.vue";
 import VideoModal from "@/components/Book/VideoModal.vue";
 
 import { ref, onMounted, computed, watch } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import useStore from "@/store/useStore";
 import usePersonDetail from "@/store/usePersonDetail";
 import { Swiper, SwiperSlide } from "swiper/vue";
@@ -209,6 +210,7 @@ export default {
 
 <script setup>
 const route = useRoute();
+const router = useRouter();
 const store = useStore();
 const personDetailStore = usePersonDetail();
 const {
@@ -388,14 +390,19 @@ img.book-shelf-album {
   object-fit: cover;
 }
 .left-ink-btn {
-    @include flex-center-vertical;
-    position: absolute;
-    bottom: 5%;
-    right: 3%;
-    h3 {
-      font-size: 4rem;
-    }
+  @include flex-center-vertical;
+  position: absolute;
+  bottom: 5%;
+  right: 3%;
+  img {
+    width: 88%;
+    height: 100%;
+    object-fit: contain;
   }
+  h3 {
+    font-size: 4rem;
+  }
+}
 .bookshelf-fade-enter-active,
 .bookshelf-fade-leave-active {
   transition: opacity 0.5s ease;

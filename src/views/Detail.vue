@@ -3,7 +3,7 @@
     <div class="detail-bg">
       <div class="repeat-door-bg"></div>
       <img src="/image/detail/chu-van-an-full.png" alt="" />
-      <!-- <img :src="currentCeleb.image" alt="" /> -->
+      <img :src="currentCeleb.image" alt="" />
       <div class="floor" src="/image/detail/floor.png" alt="" />
     </div>
     <div class="celeb-detail-context">
@@ -23,8 +23,7 @@
         mẫu mực của nhà giáo, của trí thức sống có lý tưởng, đạo đức và trách
         nhiệm với dân tộc.  
       </p>
-      <!-- <Audio :audioSrc="audioSrc" /> -->
-      <Audio audioSrc="/audio/music.mp3" />
+      <Audio :audioSrc="audioSrc" />
     </div>
     <div class="detail-navbar">
       <span v-for="path in pathArr">
@@ -174,6 +173,7 @@ onMounted(async () => {
 
     p {
       overflow-y: scroll;
+      font-size:3rem;
     }
   }
   .detail-navbar {

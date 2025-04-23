@@ -1,7 +1,7 @@
 <template>
   <div class="timeline">
     <img
-      :class="isLast || 'fade'"
+      :class="isFirst && 'fade'"
       src="/image/timeline/right.svg"
       alt=""
       @click="goPrevious"
@@ -19,7 +19,7 @@
       </div>
     </div>
     <img
-      :class="isFirst || 'fade'"
+      :class="isLast && 'fade'"
       src="/image/timeline/right.svg"
       alt=""
       @click="goNext"
@@ -29,6 +29,7 @@
       <div class="timeline-detail">
         <div
           class="timeline-detail-item"
+          :class="activeId !== celeb.id && 'deactive'"
           v-for="celeb in personStore.personList"
           :key="celeb.id"
           @click="activeId = celeb.id"
@@ -100,10 +101,8 @@ const goNext = () => {
   if (personStore.personList.at(-1).id === celebList.value[2].id) return;
 
   isNavigating.value = true;
-  setTimeout(() => {
-    isNavigating.value = false;
-    handleNavigate(celebList.value[2].id, getThreeElementsAfterIndex);
-  }, 1500);
+  isNavigating.value = false;
+  handleNavigate(celebList.value[2].id, getThreeElementsAfterIndex);
 };
 
 const goPrevious = () => {
@@ -111,10 +110,8 @@ const goPrevious = () => {
   if (celebList.value[0].id === personStore.personList[0].id) return;
 
   isNavigating.value = true;
-  setTimeout(() => {
-    isNavigating.value = false;
-    handleNavigate(celebList.value[0].id, getThreeElementsBeforeIndex);
-  }, 1500);
+  isNavigating.value = false;
+  handleNavigate(celebList.value[0].id, getThreeElementsBeforeIndex);
 };
 
 /**
@@ -149,11 +146,7 @@ const handleNavigate = (id, callback) => {
   height: 100%;
   position: relative;
   display: flex;
-  // justify-content: center;
-  /* padding: 0 6rem; */
-  /* flex-wrap: wrap; */
   background: url("/image/hoang-thanh-bg.png") no-repeat center/cover;
-  /* overflow: scroll; */
   gap: 1rem;
 
   img {
