@@ -2,7 +2,6 @@
   <div class="celeb-detail">
     <div class="detail-bg">
       <div class="repeat-door-bg"></div>
-      <img src="/image/detail/chu-van-an-full.png" alt="" />
       <img :src="currentCeleb.image" alt="" />
       <div class="floor" src="/image/detail/floor.png" alt="" />
     </div>
@@ -141,8 +140,8 @@ onMounted(async () => {
       position: absolute;
       object-fit: contain;
       width: 85%;
-      height: 77%;
-      top: 42%;
+      height: 75%;
+      top: 43%;
       left: 56%;
       transform: translate(-50%, -50%);
     }
@@ -173,7 +172,7 @@ onMounted(async () => {
 
     p {
       overflow-y: scroll;
-      font-size:3rem;
+      font-size: 3rem;
     }
   }
   .detail-navbar {

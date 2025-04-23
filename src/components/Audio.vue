@@ -38,8 +38,7 @@
       loop
     >
       <!-- Replace this with your actual audio file source -->
-      <!-- <source :src="resolvedAudioSrc" type="audio/mp3" /> -->
-      <source src="/audio/test-audio.mp3" type="audio/mp3" />
+      <source :src="resolvedAudioSrc" type="audio/mp3" />
     </audio>
   </div>
 </template>

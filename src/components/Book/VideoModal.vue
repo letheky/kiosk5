@@ -7,7 +7,7 @@
     >
       <!-- Replace this with your actual audio file source -->
       <source
-        src="/chu-van-an-data/di-san/video/test-video.mp4"
+        :src="audioSrc"
         type="audio/mp3"
       />
     </video>
@@ -62,6 +62,7 @@ const currentTime = ref(0);
 const duration = ref(0);
 defineProps({
   close: Function, // Change from closeVideo to close
+  audioSrc: String,
 });
 
 const progressPercentage = computed(() => {

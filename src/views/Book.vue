@@ -1,8 +1,5 @@
 <template>
   <div class="book-shelf">
-    <div v-if="selectedOption === '3'" style="height: 100%">
-      <VideoModal :close="closeVideo" />
-    </div>
     <!-- <img src="/image/book/book-shelf.png" alt="" /> -->
     <div class="media-content">
       <div v-if="selectedOption === '1'">
@@ -13,7 +10,7 @@
           class="media-swiper"
         >
           <SwiperSlide
-            v-for="(el, index) in book"
+            v-for="(el, index) in computedDocumentList"
             :key="index"
             class="media-slide"
           >
@@ -21,7 +18,7 @@
               class="book-shelf-item"
               :src="el.thumbnail"
               alt=""
-              @click="openBookDetail(book, index)"
+              @click="openBookDetail(index)"
             />
           </SwiperSlide>
         </Swiper>
@@ -37,15 +34,15 @@
           class="media-swiper"
         >
           <SwiperSlide
-            v-for="(el, index) in album"
+            v-for="(el, index) in personDetailStore.personDetail.image_folder"
             :key="index"
             class="media-slide"
           >
             <img
               class="book-shelf-album"
-              :src="el.image_list[0]"
+              :src="el.image || el.thumbnail"
               alt=""
-              @click="openAlbumDetail(el, index)"
+              @click="openAlbumDetail(index)"
             />
           </SwiperSlide>
         </Swiper>
@@ -55,6 +52,46 @@
         <div class="swiper-button-next">
           <img class="nav-icon-right" src="/image/splash-right.svg" alt="" />
         </div>
+      </div>
+      <div v-else>
+        <!-- :audioSrc="
+          personDetailStore.personDetail.audio_folder[0].audio_list[0]
+            .translations[store.lang].file
+        " -->
+        <Swiper
+          :slides-per-view="3"
+          :navigation="{
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev',
+          }"
+          :modules="[Navigation]"
+          class="media-swiper"
+        >
+          <SwiperSlide
+            v-for="(el, index) in computedAudiolist"
+            :key="index"
+            class="media-slide"
+          >
+            <video
+              class="book-shelf-video"
+              alt=""
+              @click="openVideoDetail(index)"
+            >
+              Your browser does not support the video tag.
+              <source
+                :src="el.translations[store.lang].file"
+                type="video/mp4"
+              />
+            </video>
+          </SwiperSlide>
+        </Swiper>
+        <div class="swiper-button-prev">
+          <img class="nav-icon-left" src="/image/splash-left.svg" alt="" />
+        </div>
+        <div class="swiper-button-next">
+          <img class="nav-icon-right" src="/image/splash-right.svg" alt="" />
+        </div>
+        <!-- <VideoModal :close="closeVideo" /> -->
       </div>
     </div>
     <div class="book-shelf-content">
@@ -78,68 +115,6 @@
           @update:selectedOption="updateSelectedOption"
         />
       </div>
-      <!-- <Transition name="bookshelf-fade">
-        <div v-if="selectedOption === '1'" class="book-shelf__img">
-          <Swiper
-            :slides-per-view="3"
-            :navigation="{
-              nextEl: '.swiper-button-next',
-              prevEl: '.swiper-button-prev',
-            }"
-            :modules="[Navigation]"
-            class="book-swiper"
-          >
-            <SwiperSlide
-              v-for="(book, index) in computedDocumentList.document_list"
-              :key="index"
-              class="book-slide"
-            >
-              <img
-                class="book-shelf-item"
-                :src="book.thumbnail"
-                alt=""
-                @click="openBookDetail(book, index)"
-              />
-            </SwiperSlide>
-          </Swiper>
-          <div class="swiper-button-prev">
-            <img class="nav-icon-left" src="/image/splash-left.svg" alt="" />
-          </div>
-          <div class="swiper-button-next">
-            <img class="nav-icon-right" src="/image/splash-right.svg" alt="" />
-          </div>
-        </div>
-        <div v-else class="book-shelf__img">
-          <Swiper
-            :slides-per-view="3"
-            :navigation="{
-              nextEl: '.swiper-button-next',
-              prevEl: '.swiper-button-prev',
-            }"
-            :modules="[Navigation]"
-            class="book-swiper"
-          >
-            <SwiperSlide
-              v-for="(book, index) in computedDocumentList.document_list"
-              :key="index"
-              class="book-slide"
-            >
-              <img
-                class="book-shelf-item"
-                :src="book.thumbnail"
-                alt=""
-                @click="openBookDetail(book, index)"
-              />
-            </SwiperSlide>
-          </Swiper>
-          <div class="swiper-button-prev">
-            <img class="nav-icon-left" src="/image/splash-left.svg" alt="" />
-          </div>
-          <div class="swiper-button-next">
-            <img class="nav-icon-right" src="/image/splash-right.svg" alt="" />
-          </div>
-        </div>
-      </Transition> -->
     </div>
     <Transition name="fade">
       <Modal
@@ -148,7 +123,11 @@
       >
         <FlipBookHardcode
           :close="closeFlipBook"
-          :link="book[selectedBookIndex].file"
+          :link="
+            computedDocumentList[selectedBookIndex]?.file
+              ? computedDocumentList[selectedBookIndex]?.file
+              : computedDocumentList[selectedBookIndex]?.link
+          "
         />
       </Modal>
     </Transition>
@@ -159,7 +138,22 @@
       >
         <AlbumModal
           :close="closeImageAlbum"
-          :albumList="album[selectedAlbumIndex]"
+          :albumList="
+            personDetailStore.personDetail.image_folder[selectedAlbumIndex]
+          "
+        />
+      </Modal>
+    </Transition>
+    <Transition name="fade">
+      <Modal
+        :modelValue="isVideoAlbum"
+        @update:modelValue="isVideoAlbum = $event"
+      >
+        <VideoModal
+          :close="closeVideoAlbum"
+          :video="
+            computedAudiolist[index]
+          "
         />
       </Modal>
     </Transition>
@@ -188,7 +182,6 @@ import usePersonDetail from "@/store/usePersonDetail";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { Navigation } from "swiper/modules";
 
-import { fetchPersonDocument } from "@/api/fetch";
 import useModal from "@/composables/useModal";
 
 export default {
@@ -218,14 +211,18 @@ const {
   open: openFlipBook,
   close: closeFlipBook,
 } = useModal();
+
 const {
   isOpen: isImageAlbum,
   open: openImageAlbum,
   close: closeImageAlbum,
 } = useModal();
 
-const workOfDocumentlist = ref([]); // Tác phẩm của nhân vật
-const aboutDocumentlist = ref([]); // Tác phẩm về nhân vật
+const {
+  isOpen: isVideoAlbum,
+  open: openVideoAlbum,
+  close: closeVideoAlbum,
+} = useModal();
 
 const selectedOption = ref("1");
 const selectedBookIndex = ref(0);
@@ -237,18 +234,26 @@ const updateSelectedOption = (value) => {
 };
 
 const computedDocumentList = computed(() => {
-  if (selectedOption.value === "1") {
-    return personDetailStore.personDetail.document_folder[0];
-  } else {
-    return personDetailStore.personDetail.document_folder[1];
-  }
+  const totalDocumentList = [
+    ...personDetailStore.personDetail.document_folder[0].document_list,
+    ...personDetailStore.personDetail.document_folder[1].document_list,
+  ];
+  return totalDocumentList.filter((el) => el.link || el.file);
 });
 
-const openBookDetail = (book, index) => {
+const computedAudiolist = computed(() => {
+  return personDetailStore.personDetail.video_folder[0].video_list;
+});
+
+const openBookDetail = (index) => {
   selectedBookIndex.value = index;
   openFlipBook();
 };
-const openAlbumDetail = (album, index) => {
+const openAlbumDetail = (index) => {
+  selectedAlbumIndex.value = index;
+  openImageAlbum();
+};
+const openVideoDetail = (index) => {
   selectedAlbumIndex.value = index;
   openImageAlbum();
 };
@@ -258,6 +263,7 @@ const closeVideo = () => {
 const handleNavigate = () => {
   router.push({ name: "detail", params: { id: route.params.id } });
 };
+console.log();
 </script>
 
 <style lang="scss" scoped>

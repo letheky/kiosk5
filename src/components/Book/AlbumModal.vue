@@ -2,11 +2,13 @@
   <div class="book-detail-container">
     <Swiper
       :slides-per-view="1"
-      :modules="[Navigation]"
+      :modules="[Navigation, EffectFade]"
       :navigation="{
         nextEl: '.book-detail-button-next',
         prevEl: '.book-detail-button-prev',
       }"
+      :effect="'fade'"
+      :fadeEffect="{ crossFade: true }"
       class="book-detail-swiper"
     >
       <SwiperSlide
@@ -15,8 +17,8 @@
         class="my-swiper"
       >
         <img
-          v-if="image"
-          :src="image"
+          v-if="image.file || image.thumbnail"
+          :src="image.file || image.thumbnail"
           alt="Book cover"
           class="book-detail-image"
         />
@@ -28,7 +30,7 @@
     <div class="book-detail-button-next">
       <img class="nav-icon-right" src="/image/splash-right-white.svg" alt="" />
     </div>
-    <InkDropButton class="close-ink-btn" text="Đóng" @click="close">
+    <InkDropButton class="close-ink-btn" @click="close">
       <CloseIcon color="#fff" />
     </InkDropButton>
   </div>
@@ -37,21 +39,15 @@
 <script>
 import InkDropButton from "@/components/InkDropButton.vue";
 import CloseIcon from "@/components/icons/CloseIcon.vue";
-import FlipBook from "./FlipBook.vue";
-import Modal from "@/components/Modal.vue";
 
-import useStore from "@/store/useStore";
 import { Swiper, SwiperSlide } from "swiper/vue";
-import { Navigation } from "swiper/modules";
-import useModal from "@/composables/useModal";
+import { Navigation, EffectFade } from "swiper/modules";
 
 export default {
   name: "AlbumModal",
   components: {
     InkDropButton,
     CloseIcon,
-    Modal,
-    FlipBook,
     Swiper,
     SwiperSlide,
   },
@@ -59,15 +55,10 @@ export default {
 </script>
 
 <script setup>
-const store = useStore();
-
-
 const props = defineProps({
   close: Function,
-  albumList: Array,
+  albumList: Object,
 });
-
-
 </script>
 
 <style lang="scss" scoped>
@@ -82,17 +73,27 @@ const props = defineProps({
     contain;
 
   .book-detail-swiper {
-    // pointer-events: none;
+    width: 100%;
+    height: 100%;
+    .swiper-slide {
+      opacity: 0;
+      transition: opacity 0.3s;
+
+      &.swiper-slide-active {
+        opacity: 1;
+      }
+    }
     .my-swiper {
       display: flex;
+      justify-content: center;
       align-items: center;
-      padding-left: 16%;
-      padding-right: 16%;
-      gap: 10rem;
+      width: 100%;
+      height: 100%;
 
       .book-detail-image {
         height: 60vh;
-        width: 100%;
+        max-width: 68%; /* Instead of padding left/right 16% */
+        object-fit: contain;
       }
 
       .book-detail-info {
@@ -138,8 +139,8 @@ const props = defineProps({
     position: absolute;
     bottom: 12%;
     right: 19%;
-    width: 25rem;
-    height: 25rem;
+    width: 20rem;
+    height: 20rem;
     z-index: $priority-medium;
   }
 }

@@ -1,6 +1,12 @@
 <template>
   <div class="flipbook">
-    <iframe :src="pdfLink" width="100%" height="100%" />
+    <iframe
+      v-if="linkType === 'ebook'"
+      :src="link"
+      width="100%"
+      height="100%"
+    />
+    <iframe v-else :src="pdfLink" width="100%" height="100%" />
 
     <InkDropButton class="close-ink-btn" text="Đóng" @click="close">
       <CloseIcon color="#fff" />
@@ -11,6 +17,7 @@
 <script>
 import InkDropButton from "@/components/InkDropButton.vue";
 import CloseIcon from "@/components/icons/CloseIcon.vue";
+import { computed } from "vue";
 import { ref, onMounted } from "vue";
 
 export default {
@@ -28,6 +35,12 @@ const pdfLink = ref("");
 const props = defineProps({
   close: Function,
   link: String,
+});
+
+const linkType = computed(() => {
+  if (props.link) {
+    return props.link.includes(".pdf") ? "pdf" : "ebook";
+  }
 });
 
 onMounted(() => {
