@@ -34,8 +34,6 @@
       @timeupdate="onTimeUpdate"
       @loadedmetadata="onLoadedMetadata"
       @ended="onAudioEnded"
-      autoplay
-      loop
     >
       <!-- Replace this with your actual audio file source -->
       <source :src="resolvedAudioSrc" type="audio/mp3" />

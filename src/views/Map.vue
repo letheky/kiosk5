@@ -56,13 +56,10 @@
 import RadioBtn from "@/components/RadioBtn.vue";
 import DestinationModal from "@/components/Map/DestinationModal.vue";
 import CustomMarker from "@/components/CustomMarker.vue";
-import { school, road } from "@/data/map";
 
 import { ref, onMounted, computed, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import useStore from "@/store/useStore";
-import usePerson from "@/store/usePerson";
-import { fetchPersonArticle } from "@/api/fetch";
+import usePersonDetail from "@/store/usePersonDetail";
 
 export default {
   name: "MapDetail",
@@ -76,29 +73,16 @@ export default {
 <script setup>
 const router = useRouter();
 const route = useRoute();
-const store = useStore();
-const personStore = usePerson();
+const personDetailStore = usePersonDetail();
 
-const currentCeleb = computed(() => {
-  return personStore.personList.find((person) => person.id === route.params.id);
-});
-
-const inherritedPositionList = ref([]);
+const roadPositionList = ref([]);
 const schoolPositionList = ref([]);
-const genealogyPositionList = ref([]);
 
 const activePositionList = computed(() => {
-  // if (selectedOption.value === "1") {
-  //   return inherritedPositionList.value;
-  // } else if (selectedOption.value === "2") {
-  //   return schoolPositionList.value;
-  // } else {
-  //   return genealogyPositionList.value;
-  // }
   if (selectedOption.value === "1") {
-    return road;
+    return roadPositionList.value;
   } else {
-    return school;
+    return schoolPositionList.value;
   }
 });
 
@@ -111,18 +95,10 @@ const updateSelectedOption = (value) => {
 };
 
 onMounted(async () => {
-  inherritedPositionList.value = await fetchPersonArticle(
-    store,
-    currentCeleb.value.article_topic[0]
-  );
-  schoolPositionList.value = await fetchPersonArticle(
-    store,
-    currentCeleb.value.article_topic[1]
-  );
-  genealogyPositionList.value = await fetchPersonArticle(
-    store,
-    currentCeleb.value.article_topic[2]
-  );
+  roadPositionList.value =
+    personDetailStore.personDetail.article_topic[0].article_list;
+  schoolPositionList.value =
+    personDetailStore.personDetail.article_topic[1].article_list;
 });
 
 const showDestinationModal = (position) => {

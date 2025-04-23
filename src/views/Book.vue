@@ -172,7 +172,6 @@ import CloseIcon from "@/components/icons/CloseIcon.vue";
 import RightIcon from "@/components/icons/RightIcon.vue";
 import Modal from "@/components/Modal.vue";
 import AlbumModal from "@/components/Book/AlbumModal.vue";
-import { book, album, video } from "@/data/book";
 import FlipBookHardcode from "@/components/Book/FlipBookHardcode.vue";
 import VideoModal from "@/components/Book/VideoModal.vue";
 
