@@ -6,11 +6,9 @@
       @loadedmetadata="onLoadedMetadata"
     >
       <!-- Replace this with your actual audio file source -->
-      <source
-        :src="audioSrc"
-        type="audio/mp3"
-      />
+      <source :src="resolvedAudioSrc" type="audio/mp4" />
     </video>
+    <p style="color:#fff">{{ name }}</p>
     <div class="my-progress-bar">
       <div
         class="play-button"
@@ -49,7 +47,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount, computed } from "vue";
+import { ref, onMounted, onBeforeUnmount, computed, watch } from "vue";
 import InkDropButton from "@/components/InkDropButton.vue";
 import CloseIcon from "@/components/icons/CloseIcon.vue";
 
@@ -60,10 +58,31 @@ const audioRef = ref(null);
 const isPlaying = ref(false);
 const currentTime = ref(0);
 const duration = ref(0);
-defineProps({
+const props = defineProps({
   close: Function, // Change from closeVideo to close
   audioSrc: String,
+  name: String,
 });
+
+const resolvedAudioSrc = ref(""); // Resolved audio source
+// Watch for changes to audioSrc prop and update resolvedAudioSrc
+watch(
+  () => props.audioSrc,
+  async (newAudioSrc) => {
+    if (newAudioSrc) {
+      try {
+        console.log("chekc", newAudioSrc);
+        resolvedAudioSrc.value = await newAudioSrc; // Resolve the promise
+        if (audioRef.value) {
+          audioRef.value.load(); // Reload the audio element with the new source
+        }
+      } catch (error) {
+        console.error("Error resolving audioSrc:", error);
+      }
+    }
+  },
+  { immediate: true } // Run the watcher immediately to handle initial value
+);
 
 const progressPercentage = computed(() => {
   if (duration.value === 0) return 0;
@@ -137,13 +156,13 @@ $unplayed-color: #e7d7cf; // Your current track color
 .player {
   display: flex;
   align-items: center;
-  padding: 5%;
+  padding: 5% 10%;
   gap: 2rem;
   justify-content: center;
   position: relative;
   flex-direction: column;
   height: 100%;
-  background: rgba(0, 0, 0, 0.3);
+  background: rgba(0, 0, 0, 0.8);
   z-index: $priority-max;
   backdrop-filter: blur(2rem);
 
@@ -157,6 +176,7 @@ $unplayed-color: #e7d7cf; // Your current track color
     border-radius: 4rem;
     padding: 2rem;
     background-color: rgba(0, 0, 0, 0.3);
+    margin-top: 1rem;
     .play-button {
       cursor: pointer;
       transition: background-color 0.3s ease;
@@ -243,7 +263,7 @@ $unplayed-color: #e7d7cf; // Your current track color
 
   video {
     width: 80%;
-    height: 90%;
+    // height: 90%;
   }
 
   .close-ink-btn {

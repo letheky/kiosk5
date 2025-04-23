@@ -151,8 +151,9 @@
       >
         <VideoModal
           :close="closeVideoAlbum"
-          :video="
-            computedAudiolist[index]
+          :name="computedAudiolist[selectedVideoIndex].translations[store.lang].name"
+          :audioSrc="
+            computedAudiolist[selectedVideoIndex].translations[store.lang].file
           "
         />
       </Modal>
@@ -227,6 +228,7 @@ const {
 const selectedOption = ref("1");
 const selectedBookIndex = ref(0);
 const selectedAlbumIndex = ref(0);
+const selectedVideoIndex = ref(0);
 
 // Method to update `selectedOption`
 const updateSelectedOption = (value) => {
@@ -238,7 +240,13 @@ const computedDocumentList = computed(() => {
     ...personDetailStore.personDetail.document_folder[0].document_list,
     ...personDetailStore.personDetail.document_folder[1].document_list,
   ];
-  return totalDocumentList.filter((el) => el.link || el.file);
+  const newComputedDocumentList = totalDocumentList.filter(
+    (el) => el.link || el.file
+  );
+  newComputedDocumentList.push(
+    personDetailStore.personDetail.document_folder[1].document_list[4]
+  );
+  return newComputedDocumentList;
 });
 
 const computedAudiolist = computed(() => {
@@ -254,8 +262,8 @@ const openAlbumDetail = (index) => {
   openImageAlbum();
 };
 const openVideoDetail = (index) => {
-  selectedAlbumIndex.value = index;
-  openImageAlbum();
+  selectedVideoIndex.value = index;
+  openVideoAlbum();
 };
 const closeVideo = () => {
   selectedOption.value = "1";

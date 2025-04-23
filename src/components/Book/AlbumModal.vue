@@ -22,6 +22,7 @@
           alt="Book cover"
           class="book-detail-image"
         />
+        <p class="book-detail-info">{{ image.translations[store.lang].name }}</p>
       </SwiperSlide>
     </Swiper>
     <div class="book-detail-button-prev">
@@ -39,6 +40,7 @@
 <script>
 import InkDropButton from "@/components/InkDropButton.vue";
 import CloseIcon from "@/components/icons/CloseIcon.vue";
+import useStore from "@/store/useStore";
 
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { Navigation, EffectFade } from "swiper/modules";
@@ -55,6 +57,7 @@ export default {
 </script>
 
 <script setup>
+const store = useStore();
 const props = defineProps({
   close: Function,
   albumList: Object,
@@ -87,6 +90,7 @@ const props = defineProps({
       display: flex;
       justify-content: center;
       align-items: center;
+      flex-direction: column;
       width: 100%;
       height: 100%;
 
@@ -94,6 +98,10 @@ const props = defineProps({
         height: 60vh;
         max-width: 68%; /* Instead of padding left/right 16% */
         object-fit: contain;
+        margin-bottom: 4rem;
+      }
+      .book-detail-info{
+        
       }
 
       .book-detail-info {
