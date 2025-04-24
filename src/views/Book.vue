@@ -361,10 +361,6 @@ console.log();
       display: flex;
       align-items: center;
       justify-content: space-around;
-
-      // div:nth-of-type(1) {
-      //   margin-bottom: 5rem;
-      // }
     }
 
     .book-shelf__img {
