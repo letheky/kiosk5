@@ -22,30 +22,6 @@
               @click="openBookDetail(index)"
             />
           </SwiperSlide>
-          <SwiperSlide
-            v-for="(el, index) in computedDocumentList"
-            :key="index"
-            class="media-slide"
-          >
-            <img
-              class="book-shelf-item"
-              :src="el.thumbnail"
-              alt=""
-              @click="openBookDetail(index)"
-            />
-          </SwiperSlide>
-          <SwiperSlide
-            v-for="(el, index) in computedDocumentList"
-            :key="index"
-            class="media-slide"
-          >
-            <img
-              class="book-shelf-item"
-              :src="el.thumbnail"
-              alt=""
-              @click="openBookDetail(index)"
-            />
-          </SwiperSlide>
         </Swiper>
       </div>
       <div v-else-if="selectedOption === '2'">
@@ -59,7 +35,6 @@
           :modules="[Navigation]"
           class="media-swiper"
         >
-
           <SwiperSlide
             v-for="(el, index) in personDetailStore.personDetail.image_folder"
             :key="index"
@@ -107,16 +82,18 @@
               class="d-flex flex-column justify-content-center align-items-center album-image"
             >
               <video
+                v-video-thumbnail
+                crossorigin="anonymous"
                 class="book-shelf-video"
                 alt=""
                 @click="openVideoDetail(index)"
               >
-                Your browser does not support the video tag.
                 <source
                   :src="el.translations[store.lang].file"
                   type="video/mp4"
                 />
               </video>
+              <img class="book-shelf-video-icon" src="/image/play-idle-icon.svg" alt="" srcset="">
               <h3>{{ el.translations[store.lang].name }}</h3>
             </div>
           </SwiperSlide>
@@ -211,7 +188,7 @@ import AlbumModal from "@/components/Book/AlbumModal.vue";
 import FlipBookHardcode from "@/components/Book/FlipBookHardcode.vue";
 import VideoModal from "@/components/Book/VideoModal.vue";
 
-import { ref,  computed} from "vue";
+import { ref, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import useStore from "@/store/useStore";
 import usePersonDetail from "@/store/usePersonDetail";
@@ -269,16 +246,12 @@ const updateSelectedOption = (value) => {
   selectedOption.value = value;
 };
 
-
 const computedDocumentList = computed(() => {
   const totalDocumentList = [
-    ...personDetailStore.personDetail.document_folder[0]?.document_list
+    ...personDetailStore.personDetail.document_folder[0]?.document_list,
   ];
   const newComputedDocumentList = totalDocumentList.filter(
     (el) => el.link || el.file
-  );
-  newComputedDocumentList.push(
-    personDetailStore.personDetail.document_folder[0].document_list[4]
   );
   return newComputedDocumentList;
 });
@@ -353,6 +326,16 @@ console.log();
         font-size: 3rem;
         margin-top: 2rem;
       }
+
+      .book-shelf-video-icon{
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 10rem;
+        height: 10rem;
+        pointer-events: none;
+      }
     }
   }
 
@@ -371,7 +354,7 @@ console.log();
     left: 50%;
     transform: translateX(-50%);
     width: 60%;
-    z-index: 999;
+    z-index: $priority-medium;
 
     .radio-group {
       font-size: 5rem;

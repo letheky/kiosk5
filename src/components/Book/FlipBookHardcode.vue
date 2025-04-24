@@ -8,7 +8,7 @@
     />
     <iframe
       v-else
-      :src="`/ebook/index.html?id=${pdfLink}`"
+      :src="`./ebook/index.html?id=${pdfLink}`"
       width="100%"
       height="100%"
     />
