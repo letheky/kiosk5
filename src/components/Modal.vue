@@ -31,6 +31,6 @@ function emitClose() {
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: $prority-high;
+  z-index: $priority-high;
 }
 </style>
