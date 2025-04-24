@@ -6,7 +6,12 @@
       width="100%"
       height="100%"
     />
-    <iframe v-else :src="pdfLink" width="100%" height="100%" />
+    <iframe
+      v-else
+      :src="`/ebook/index.html?id=${pdfLink}`"
+      width="100%"
+      height="100%"
+    />
 
     <InkDropButton class="close-ink-btn" text="Đóng" @click="close">
       <CloseIcon color="#fff" />
@@ -18,7 +23,6 @@
 import InkDropButton from "@/components/InkDropButton.vue";
 import CloseIcon from "@/components/icons/CloseIcon.vue";
 import { computed } from "vue";
-import { ref, onMounted } from "vue";
 
 export default {
   name: "FlipBookModal",
@@ -30,26 +34,20 @@ export default {
 </script>
 
 <script setup>
-const pdfLink = ref("");
+// const pdfLink = ref("");
 
 const props = defineProps({
   close: Function,
   link: String,
 });
 
+const pdfLink = new URLSearchParams(props.link).toString();
 const linkType = computed(() => {
   if (props.link) {
     return props.link.includes(".pdf") ? "pdf" : "ebook";
   }
 });
 
-onMounted(() => {
-  if (props.link) {
-    console.log(props.link);
-    const params = new URLSearchParams(props.link).toString();
-    pdfLink.value = `/ebook/index.html?id=${params}`;
-  }
-});
 </script>
 
 <style lang="scss" scoped>
