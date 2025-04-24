@@ -24,7 +24,6 @@
         Chu Văn An (1292–1370), tự Linh Triệt, hiệu Tiều Ẩn, đỗ
         <span
           style="
-            fontfont-weight: bold !important;
             font-family: 'Myriad-pro-bold';
           "
           @click="showLv2DetailInfo('thaihocsinh')"
@@ -39,7 +38,6 @@
         mở trường dạy học. Vào thời vua Trần Minh Tông (1314-1329), ông giữ chức
         <span
           style="
-            fontfont-weight: bold !important;
             font-family: 'Myriad-pro-bold';
           "
           @click="showLv2DetailInfo('tunghiep')"
@@ -50,7 +48,6 @@
         Trần Dụ Tông (1341-1369), ông dâng
         <span
           style="
-            fontfont-weight: bold !important;
             font-family: 'Myriad-pro-bold';
           "
           @click="showLv2DetailInfo('thattramso')"
@@ -199,12 +196,6 @@
 </template>
 
 <script>
-import Audio from "@/components/Audio.vue";
-import InkDropButton from "@/components/InkDropButton.vue";
-import InkDropButtonReverse from "@/components/InkDropButtonReverse.vue";
-import DownIcon from "@/components/icons/DownIcon.vue";
-import LeftIcon from "@/components/icons/LeftIcon.vue";
-import RightIcon from "@/components/icons/RightIcon.vue";
 
 import { ref, computed } from "vue";
 import useStore from "@/store/useStore";
@@ -217,12 +208,6 @@ import { fetchPersonById } from "@/api/fetch";
 export default {
   name: "Detail",
   components: {
-    Audio,
-    InkDropButtonReverse,
-    InkDropButton,
-    DownIcon,
-    LeftIcon,
-    RightIcon,
   },
 };
 </script>
@@ -264,8 +249,6 @@ const currentCeleb = computed(() => {
 });
 
 function showLv2DetailInfo(name) {
-  console.log("name");
-  console.log(name);
   nameLv2Detail.value = name;
 }
 function hideLv2DetailInfo() {
@@ -379,7 +362,7 @@ onMounted(async () => {
     transform: translate(-50%, -50%);
     width: 66.25%;
     height: 83%;
-    background-image: url("/image/detail/lv2/bg-lv2-detail.png");
+    background-image: url("/image/detail/lv2/detail-book-bg.png");
     padding: 200px 180px;
   }
   img.close-lv2 {

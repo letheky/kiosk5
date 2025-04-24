@@ -59,8 +59,6 @@
           :modules="[Navigation]"
           class="media-swiper"
         >
-          <!-- <template    v-for="(image_folder, index) in personDetailStore.personDetail.image_folder"
-            :key="index"> -->
 
           <SwiperSlide
             v-for="(el, index) in personDetailStore.personDetail.image_folder"
@@ -81,7 +79,6 @@
               <h3>{{ el.translations[store.lang].name }}</h3>
             </div>
           </SwiperSlide>
-          <!-- </template> -->
         </Swiper>
         <div class="swiper-button-prev">
           <img class="nav-icon-left" src="/image/splash-left.svg" alt="" />
@@ -92,10 +89,6 @@
       </div>
       <div v-else>
         <h3 class="media-title">Thư viện video</h3>
-        <!-- :audioSrc="
-          personDetailStore.personDetail.audio_folder[0].audio_list[0]
-            .translations[store.lang].file
-        " -->
         <Swiper
           :slides-per-view="3"
           :navigation="{
@@ -134,7 +127,6 @@
         <div class="swiper-button-next">
           <img class="nav-icon-right" src="/image/splash-right.svg" alt="" />
         </div>
-        <!-- <VideoModal :close="closeVideo" /> -->
       </div>
     </div>
     <div class="book-shelf-content">
@@ -213,14 +205,13 @@
 <script>
 import RadioBtn from "@/components/RadioBtn.vue";
 import InkDropButton from "@/components/InkDropButton.vue";
-import CloseIcon from "@/components/icons/CloseIcon.vue";
 import RightIcon from "@/components/icons/RightIcon.vue";
 import Modal from "@/components/Modal.vue";
 import AlbumModal from "@/components/Book/AlbumModal.vue";
 import FlipBookHardcode from "@/components/Book/FlipBookHardcode.vue";
 import VideoModal from "@/components/Book/VideoModal.vue";
 
-import { ref, onMounted, computed, watch } from "vue";
+import { ref,  computed} from "vue";
 import { useRoute, useRouter } from "vue-router";
 import useStore from "@/store/useStore";
 import usePersonDetail from "@/store/usePersonDetail";
@@ -274,33 +265,14 @@ const selectedBookIndex = ref(0);
 const selectedAlbumIndex = ref(0);
 const selectedVideoIndex = ref(0);
 
-// Method to update `selectedOption`
 const updateSelectedOption = (value) => {
   selectedOption.value = value;
 };
-// const computedDocumentList = computed(() => {
-//   const totalDocumentList = [
-//     ...(personDetailStore.personDetail.document_folder[0]?.document_list || []),
-//     ...(personDetailStore.personDetail.document_folder[1]?.document_list || []),
-//   ];
 
-//   const newComputedDocumentList = totalDocumentList.filter(
-//     (el) => el.link || el.file
-//   );
-
-//   const extraItem =
-//     personDetailStore.personDetail.document_folder[1]?.document_list?.[4];
-//   if (extraItem) {
-//     newComputedDocumentList.push(extraItem);
-//   }
-
-//   return newComputedDocumentList;
-// });
 
 const computedDocumentList = computed(() => {
   const totalDocumentList = [
-    ...personDetailStore.personDetail.document_folder[0]?.document_list,
-    // ...personDetailStore.personDetail.document_folder[1]?.document_list,
+    ...personDetailStore.personDetail.document_folder[0]?.document_list
   ];
   const newComputedDocumentList = totalDocumentList.filter(
     (el) => el.link || el.file
@@ -326,9 +298,6 @@ const openAlbumDetail = (index) => {
 const openVideoDetail = (index) => {
   selectedVideoIndex.value = index;
   openVideoAlbum();
-};
-const closeVideo = () => {
-  selectedOption.value = "1";
 };
 const handleNavigate = () => {
   router.push({ name: "detail", params: { id: route.params.id } });

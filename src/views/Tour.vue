@@ -115,7 +115,7 @@ const openDetailTour = (tour) => {
         position: relative;
 
         padding: 6rem;
-        background: url("/image/tour/tour-bg.png") no-repeat center/contain;
+        background: url("/image/tour/detail-book-bg.png") no-repeat center/contain;
       }
     }
   }

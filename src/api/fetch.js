@@ -5,12 +5,10 @@ import {
   GET_PERSON_GROUP_BY_ID,
   GET_IMAGE_LIST_BY_ID,
   GET_DOCUMENT_LIST_BY_ID,
-  GET_ARTIFACT_LIST_BY_ID,
   GET_PERSON_BY_ID,
   GET_POSITION_LIST_BY_ID,
   GET_TOUR_LIST_BY_ID,
   GET_AUDIO_LIST_BY_ID,
-  GET_ARTICLE_LIST_BY_ID,
   GET_VIDEO_LIST_BY_ID,
 } from "@/api/const";
 
@@ -75,67 +73,6 @@ export const fetchPersonPosition = async (store, positionFolderId) => {
   }
 };
 
-export const fetchPersonArticle = async (store, articleFolderId) => {
-  try {
-    // First fetch the article data
-    const documentRes = await axios.get(
-      store.api + GET_ARTICLE_LIST_BY_ID + articleFolderId + "/"
-    );
-
-    const articleList = documentRes.data.article_list || [];
-
-    // Process each article to get its related data
-    const enrichedArticles = await Promise.all(
-      articleList.map(async (article) => {
-        // Extract the needed folder IDs for this specific article
-        const imageFolderIds = article.image_folder || [];
-        const videoFolderIds = article.video_folder || [];
-        const tourFolderIds = article.tour_folder || [];
-
-        let imageData = [];
-        let videoData = [];
-        let tourData = [];
-
-        // Fetch images for this article
-        if (imageFolderIds.length > 0) {
-          const imagePromises = imageFolderIds.map((id) =>
-            fetchPersonImageFolder(store, id)
-          );
-          imageData = await Promise.all(imagePromises);
-        }
-
-        // Fetch videos for this article
-        if (videoFolderIds.length > 0) {
-          const videoPromises = videoFolderIds.map((id) =>
-            fetchPersonVideo(store, id)
-          );
-          videoData = await Promise.all(videoPromises);
-        }
-
-        // Fetch tours for this article
-        if (tourFolderIds.length > 0) {
-          const tourPromises = tourFolderIds.map((id) =>
-            fetchPersonTour(store, id)
-          );
-          tourData = await Promise.all(tourPromises);
-        }
-
-        // Return the original article with its enriched data
-        return {
-          ...article,
-          imageData,
-          videoData,
-          tourData,
-        };
-      })
-    );
-
-    return enrichedArticles;
-  } catch (error) {
-    console.error("Error fetching article and related data:", error);
-    return [];
-  }
-};
 export const fetchPersonImageFolder = async (store, imageFolderId) => {
   try {
     const imageRes = await axios.get(

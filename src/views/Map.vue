@@ -32,12 +32,6 @@
         @update:selectedOption="updateSelectedOption"
         color="#36693E"
       />
-      <!-- <RadioBtn
-        id="3"
-        optionText="Thần sắc, thần phả"
-        :selectedOption="selectedOption"
-        @update:selectedOption="updateSelectedOption"
-      /> -->
     </div>
     <div class="left-ink-btn" @click="handleNavigate">
       <img src="/image/map/back.svg" />
