@@ -39,16 +39,15 @@ onMounted(() => {
 <template>
   <div class="main" @contextmenu.prevent>
     <Transition name="fade" mode="out-in">
-      <template v-slot:default>
-        <router-view></router-view>
-      </template>
+      <router-view v-slot="{ Component }">
+        <component :is="Component" />
+      </router-view>
     </Transition>
   </div>
   <Menu :status="status"></Menu>
 </template>
 
 <style scoped lang="scss">
-
 /* Fade transition */
 .fade-enter-active,
 .fade-leave-active {

@@ -196,7 +196,7 @@
 </template>
 
 <script>
-
+import Audio from '@/components/Audio.vue';
 import { ref, computed } from "vue";
 import useStore from "@/store/useStore";
 import usePerson from "@/store/usePerson";
@@ -208,6 +208,7 @@ import { fetchPersonById } from "@/api/fetch";
 export default {
   name: "Detail",
   components: {
+    Audio
   },
 };
 </script>
