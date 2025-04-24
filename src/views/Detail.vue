@@ -362,7 +362,7 @@ onMounted(async () => {
     transform: translate(-50%, -50%);
     width: 66.25%;
     height: 83%;
-    background-image: url("/image/detail/lv2/detail-book-bg.png");
+    background-image: url("/image/book/detail-book-bg.png");
     padding: 200px 180px;
   }
   img.close-lv2 {
