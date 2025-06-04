@@ -18,6 +18,8 @@
       :style="{
         '--progressPercent': `${progressPercentage}%`,
       }"
+      @click="onProgressBarClick"
+      ref="progressBarRef"
     >
       <img class="played-audio" src="/image/audio-progress-full.svg" alt="" />
       <img class="unplayed-audio" src="/image/audio-progress.svg" alt="" />
@@ -51,6 +53,7 @@ export default {
 import { ref, onMounted, onBeforeUnmount, computed, watch } from "vue";
 
 const audioRef = ref(null);
+const progressBarRef = ref(null);
 const isPlaying = ref(false);
 const currentTime = ref(0);
 const duration = ref(0);
@@ -127,6 +130,25 @@ const togglePlay = () => {
 // Handle audio finishing
 const onAudioEnded = () => {
   isPlaying.value = false; // Set play state to false
+  audioRef.value.currentTime = 0;
+  currentTime.value = 0;
+};
+
+// Handle click on progress bar to seek to specific time
+const onProgressBarClick = (event) => {
+  if (!audioRef.value || !progressBarRef.value || duration.value === 0) return;
+
+  const rect = progressBarRef.value.getBoundingClientRect();
+  const clickX = event.clientX - rect.left;
+  const progressBarWidth = rect.width;
+  const clickPercentage = clickX / progressBarWidth;
+  
+  // Calculate the new time based on click position
+  const newTime = clickPercentage * duration.value;
+  
+  // Set the audio current time
+  audioRef.value.currentTime = newTime;
+  currentTime.value = Math.floor(newTime);
 };
 </script>
 
@@ -143,10 +165,12 @@ $unplayed-color: #e7d7cf; // Your current track color
   align-items: center;
 
   .play-button {
+    position: relative;
     img {
       width: 8rem;
       position: absolute;
-      top: 85%;
+      top: 0;
+      transform: translateY(-50%);
     }
   }
 
@@ -155,6 +179,7 @@ $unplayed-color: #e7d7cf; // Your current track color
     width: 100%;
     height: 4rem;
     margin-left: 10rem;
+    cursor: pointer; // Add cursor pointer to indicate clickable area
 
     .unplayed-audio {
       position: absolute;

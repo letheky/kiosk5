@@ -6,178 +6,14 @@
       <div class="floor" src="/image/detail/floor.png" alt="" />
     </div>
     <div class="celeb-detail-context">
-      <h3
-        style="
-          font-family: Ong-do-gia;
-          font-size: 120px;
-          margin-top: 48px;
-          text-align: center;
-        "
-      >
-        {{ currentCeleb.translations[store.lang].name }}
-      </h3>
-      <p
+      <div
+        class="celeb-detail-story"
         style="text-align: justify"
-        v-if="currentCeleb.id === 'db2e1edb-3bf3-4d7c-aa78-48e4b100f2bc'"
-      >
-        <!-- <span v-html="currentCeleb.translations[store.lang].story"></span> -->
-        Chu Văn An (1292–1370), tự Linh Triệt, hiệu Tiều Ẩn, đỗ
-        <span
-          style="
-            font-family: 'Myriad-pro-bold';
-          "
-          @click="showLv2DetailInfo('thaihocsinh')"
-          >Thái học sinh</span
-        >
-        triều Trần nhưng không ra làm quan mà về quê ở
-        <span
-          style="font-weight: bold !important; font-family: 'Myriad-pro-bold'"
-          @click="showLv2DetailInfo('quequan')"
-          >làng Quang Liệt, Thanh Đàm (Thanh Liệt, Thanh Trì, Hà Nội)
-        </span>
-        mở trường dạy học. Vào thời vua Trần Minh Tông (1314-1329), ông giữ chức
-        <span
-          style="
-            font-family: 'Myriad-pro-bold';
-          "
-          @click="showLv2DetailInfo('tunghiep')"
-        >
-          Tư nghiệp Quốc Tử Giám</span
-        >
-        tại Thăng Long, trực tiếp giảng dạy và đào tạo nhân tài. Đến thời vua
-        Trần Dụ Tông (1341-1369), ông dâng
-        <span
-          style="
-            font-family: 'Myriad-pro-bold';
-          "
-          @click="showLv2DetailInfo('thattramso')"
-          >“Thất trảm sớ”</span
-        >, xin chém 7 gian thần. Không được chấp thuận, ông từ quan về ở ẩn tại
-        <span
-          style="font-weight: bold !important; font-family: 'Myriad-pro-bold'"
-          @click="showLv2DetailInfo('nuiphuonghoang')"
-          >núi Phượng Hoàng</span
-        >. Khi mất, ông được thờ tại Văn Miếu – Quốc Tử Giám, Đình thờ danh nhân
-        Tiên Triết Chu Văn An (Thanh Liệt, Thanh Trì, Hà Nội), Đền thờ thầy Chu
-        Văn An (Chí Linh, Hải Dương) và nhiều nơi trên cả nước. Chu Văn An được
-        xem là biểu tượng mẫu mực của nhà giáo, của trí thức sống có lý tưởng,
-        đạo đức và trách nhiệm với dân tộc.  
-      </p>
-      <p
-        style="text-align: justify"
-        v-else
         v-html="currentCeleb.translations[store.lang].story"
-      ></p>
+      ></div>
       <Audio :audioSrc="audioSrc" />
     </div>
-    <div class="detail-navbar">
-      <span v-for="path in pathArr" :key="path">
-        <RouterLink
-          :to="path.path"
-          style="color: #fff"
-          :class="
-            path.id === activePathId ? 'heading-font link-active' : 'small-heading-font ' 
-          "
-        >
-          {{ path.name }}
-        </RouterLink>
-      </span>
-    </div>
-    <div class="lv2" v-if="nameLv2Detail">
-      <div class="lv2-detail">
-        <div
-          v-if="nameLv2Detail === 'thaihocsinh'"
-          style="width: 100%; height: 100%; display: flex; align-items: center"
-        >
-          <p style="font-size: 50px; font-family: Myriad-pro">
-            Thái học sinh là một chức danh trong hệ thống giáo dục của triều
-            đình phong kiến Việt Nam, thường được dùng để chỉ các học trò xuất
-            sắc hoặc các học viên cao cấp trong hệ thống Quốc Tử Giám.
-          </p>
-          <br />
-        </div>
-        <div
-          v-if="nameLv2Detail === 'quequan'"
-          style="
-            width: 100%;
-            height: 100%;
-          "
-        >
-          <p style="font-size: 50px; font-family: Myriad-pro">
-            Làng Quang Liệt, huyện Thanh Đàm (Nay là thôn Văn, xã Thanh Liệt,
-            huyện Thanh Trì, thành phố Hà Nội).
-          </p>
-          <br />
-          <img
-            style="height: 80%; width: 100%; object-fit: cover"
-            src="/image/detail/lv2/map.png"
-            alt=""
-          />
-        </div>
-        <div
-          v-if="nameLv2Detail === 'tunghiep'"
-          style="
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-          "
-        >
-          <p style="font-size: 50px; font-family: Myriad-pro">
-            "Tư nghiệp" là một chức danh quan trong hệ thống giáo dục Nho học
-            xưa, có nghĩa là người quản lý công việc học hành, giảng dạy và đào
-            tạo nhân tài tại Quốc Tử Giám.
-          </p>
-        </div>
-        <div
-          v-if="nameLv2Detail === 'thattramso'"
-          style="
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-          "
-        >
-          <p style="font-size: 50px; font-family: Myriad-pro">
-            Thất trảm sớ (七斬疏) là tờ sớ do Chu Văn An soạn và dâng lên vua
-            Trần Dụ Tông để đề nghị chém 7 người mà ông cho là nịnh thần.
-          </p>
-          <br />
-          <img
-            style="height: 80%; width: auto; object-fit: cover"
-            src="/image/detail/lv2/thattramso.png"
-            alt=""
-          />
-        </div>
-        <div
-          v-if="nameLv2Detail === 'nuiphuonghoang'"
-          style="
-            width: 100%;
-            height: 100%;
-          "
-        >
-          <p style="font-size: 50px; font-family: Myriad-pro">
-            Núi Phượng Hoàng nằm ở Chí Linh, tỉnh Hải Dương - là nơi Chu Văn An
-            lui về ở ẩn sau khi từ quan.
-          </p>
-          <br />
-
-          <img
-            style="height: auto; width: 100%; object-fit: cover"
-            src="/image/detail/lv2/map2.jpg"
-            alt=""
-          />
-        </div>
-        <img
-          class="close-lv2"
-          @click="hideLv2DetailInfo()"
-          src="/image/detail/lv2/close-lv2.png"
-          alt=""
-        />
-      </div>
-    </div>
+    <Nav />
     <router-link to="/timeline">
       <img
         style="
@@ -196,7 +32,8 @@
 </template>
 
 <script>
-import Audio from '@/components/Audio.vue';
+import Nav from "@/components/Nav.vue";
+import Audio from "@/components/Audio.vue";
 import { ref, computed } from "vue";
 import useStore from "@/store/useStore";
 import usePerson from "@/store/usePerson";
@@ -208,7 +45,7 @@ import { fetchPersonById } from "@/api/fetch";
 export default {
   name: "Detail",
   components: {
-    Audio
+    Audio,
   },
 };
 </script>
@@ -217,44 +54,12 @@ const route = useRoute();
 const store = useStore();
 const personStore = usePerson();
 const personDetailStore = usePersonDetail();
-const nameLv2Detail = ref(null);
 
-const pathArr = [
-  {
-    id: 1,
-    name: "Tiểu sử",
-    path: { name: "detail", params: { id: route.params.id } },
-  },
-  {
-    id: 2,
-    name: "Lưu danh",
-    path: { name: "map", params: { id: route.params.id } },
-  },
-  {
-    id: 3,
-    name: "Di sản",
-    path: { name: "book", params: { id: route.params.id } },
-  },
-  {
-    id: 4,
-    name: "Thờ tự",
-    path: { name: "tour", params: { id: route.params.id } },
-  },
-];
-
-const activePathId = ref(1);
 const audioSrc = ref(null);
 
 const currentCeleb = computed(() => {
   return personStore.personList.find((person) => person.id === route.params.id);
 });
-
-function showLv2DetailInfo(name) {
-  nameLv2Detail.value = name;
-}
-function hideLv2DetailInfo() {
-  nameLv2Detail.value = null;
-}
 
 onMounted(async () => {
   const currentPerson = await fetchPersonById(store, route.params.id);
@@ -317,36 +122,20 @@ onMounted(async () => {
     height: 85%;
     background: url("/image/detail/scroll-body-vertical.png") no-repeat
       center/cover;
-    padding: 13rem 12rem 14rem 9rem;
+    padding: 13rem 12rem 17rem 9rem;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    // justify-content: space-between;
 
-    p {
+    .celeb-detail-story {
+      padding-top: 10rem;
       overflow-y: scroll;
-      font-size: 3rem;
-    }
-  }
-  .detail-navbar {
-    position: absolute;
-    position: absolute;
-    bottom: 5%;
-    left: 32%;
-    /* transform: translateX(-50%); */
-    width: 50%;
-    height: 10%;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    padding: 0 15rem;
-    z-index: $priority-max;
-    background: url("/image/detail/nav-bg.png") no-repeat center/cover;
-    span {
-      .active {
-        color: $primary-color;
+      :deep(p) {
+        font-size: 3.4rem;
       }
     }
   }
+  
 }
 .lv2 {
   position: absolute;
@@ -375,14 +164,4 @@ onMounted(async () => {
   }
 }
 
-.heading-font {
-  font-family: $heading-family;
-}
-.small-heading-font {
-  font-family: $small-heading-family;
-  opacity: 0.7;
-}
-.link-active {
-  opacity: 1; font-weight: bold;
-}
 </style>

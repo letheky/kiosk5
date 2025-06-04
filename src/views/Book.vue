@@ -2,109 +2,116 @@
   <div class="book-shelf">
     <!-- <img src="/image/book/book-shelf.png" alt="" /> -->
     <div class="media-content">
-      <div v-if="selectedOption === '1' && computedDocumentList">
-        <h3 class="media-title">Thư viện ấn phẩm</h3>
-        <Swiper
-          :slides-per-view="3"
-          navigation
-          :modules="[Navigation]"
-          class="media-swiper"
-        >
-          <SwiperSlide
-            v-for="(el, index) in computedDocumentList"
-            :key="index"
-            class="media-slide"
+      <Transition name="fade" mode="out-in">
+        <div v-if="selectedOption === '1' && computedDocumentList">
+          <h3 class="media-title">Thư viện ấn phẩm</h3>
+          <Swiper
+            :slides-per-view="3"
+            navigation
+            :modules="[Navigation]"
+            class="media-swiper"
           >
-            <img
-              class="book-shelf-item"
-              :src="el.thumbnail"
-              alt=""
-              @click="openBookDetail(index)"
-            />
-          </SwiperSlide>
-        </Swiper>
-      </div>
-      <div v-else-if="selectedOption === '2'">
-        <h3 class="media-title">Thư viện hình ảnh</h3>
-        <Swiper
-          :slides-per-view="3"
-          :navigation="{
-            nextEl: '.swiper-button-next',
-            prevEl: '.swiper-button-prev',
-          }"
-          :modules="[Navigation]"
-          class="media-swiper"
-        >
-          <SwiperSlide
-            v-for="(el, index) in personDetailStore.personDetail.image_folder"
-            :key="index"
-            class="media-slide"
-          >
-            <div
-              class="d-flex flex-column justify-content-center align-items-center album-image"
+            <SwiperSlide
+              v-for="(el, index) in computedDocumentList"
+              :key="index"
+              class="media-slide"
             >
               <img
-                class="book-shelf-album"
-                :src="
-                  el.image || el.thumbnail || '/image/yellow-background.png'
-                "
+                class="book-shelf-item"
+                :src="el.thumbnail"
                 alt=""
-                @click="openAlbumDetail(index)"
+                @click="openBookDetail(index)"
               />
-              <h3>{{ el.translations[store.lang].name }}</h3>
-            </div>
-          </SwiperSlide>
-        </Swiper>
-        <div class="swiper-button-prev">
-          <img class="nav-icon-left" src="/image/splash-left.svg" alt="" />
+            </SwiperSlide>
+          </Swiper>
         </div>
-        <div class="swiper-button-next">
-          <img class="nav-icon-right" src="/image/splash-right.svg" alt="" />
-        </div>
-      </div>
-      <div v-else>
-        <h3 class="media-title">Thư viện video</h3>
-        <Swiper
-          :slides-per-view="3"
-          :navigation="{
-            nextEl: '.swiper-button-next',
-            prevEl: '.swiper-button-prev',
-          }"
-          :modules="[Navigation]"
-          class="media-swiper"
-        >
-          <SwiperSlide
-            v-for="(el, index) in computedAudiolist"
-            :key="index"
-            class="media-slide"
+        <div v-else-if="selectedOption === '2'">
+          <h3 class="media-title">Thư viện hình ảnh</h3>
+          <Swiper
+            :slides-per-view="3"
+            :navigation="{
+              nextEl: '.swiper-button-next',
+              prevEl: '.swiper-button-prev',
+            }"
+            :modules="[Navigation]"
+            class="media-swiper"
           >
-            <div
-              class="d-flex flex-column justify-content-center align-items-center album-image"
+            <SwiperSlide
+              v-for="(el, index) in personDetailStore.personDetail.image_folder"
+              :key="index"
+              class="media-slide"
             >
-              <video
-                v-video-thumbnail
-                crossorigin="anonymous"
-                class="book-shelf-video"
-                alt=""
-                @click="openVideoDetail(index)"
+              <div
+                class="d-flex flex-column justify-content-center align-items-center album-image"
               >
-                <source
-                  :src="el.translations[store.lang].file"
-                  type="video/mp4"
+                <img
+                  class="book-shelf-album"
+                  :src="
+                    el.image || el.thumbnail || personDetailStore.personDetail.image_folder[index].image_list[0].thumbnail
+                  "
+                  alt=""
+                  @click="openAlbumDetail(index)"
                 />
-              </video>
-              <img class="book-shelf-video-icon" src="/image/play-idle-icon.svg" alt="" srcset="">
-              <h3>{{ el.translations[store.lang].name }}</h3>
-            </div>
-          </SwiperSlide>
-        </Swiper>
-        <div class="swiper-button-prev">
-          <img class="nav-icon-left" src="/image/splash-left.svg" alt="" />
+                <h3>{{ el.translations[store.lang].name }}</h3>
+              </div>
+            </SwiperSlide>
+          </Swiper>
+          <div class="swiper-button-prev">
+            <img class="nav-icon-left" src="/image/splash-left.svg" alt="" />
+          </div>
+          <div class="swiper-button-next">
+            <img class="nav-icon-right" src="/image/splash-right.svg" alt="" />
+          </div>
         </div>
-        <div class="swiper-button-next">
-          <img class="nav-icon-right" src="/image/splash-right.svg" alt="" />
+        <div v-else>
+          <h3 class="media-title">Thư viện video</h3>
+          <Swiper
+            :slides-per-view="3"
+            :navigation="{
+              nextEl: '.swiper-button-next',
+              prevEl: '.swiper-button-prev',
+            }"
+            :modules="[Navigation]"
+            class="media-swiper"
+          >
+            <SwiperSlide
+              v-for="(el, index) in computedAudiolist"
+              :key="index"
+              class="media-slide"
+            >
+              <div
+                class="d-flex flex-column justify-content-center align-items-center album-image"
+              >
+                <video
+                  v-video-thumbnail
+                  crossorigin="anonymous"
+                  class="book-shelf-video"
+                  alt=""
+                  @click="openVideoDetail(index)"
+                >
+                  <source
+                    :src="el.translations[store.lang].file"
+                    type="video/mp4"
+                  />
+                </video>
+                <img
+                  class="book-shelf-video-icon"
+                  src="/image/play-idle-icon.svg"
+                  alt=""
+                  srcset=""
+                />
+                <h3>{{ el.translations[store.lang].name }}</h3>
+              </div>
+            </SwiperSlide>
+          </Swiper>
+          <div class="swiper-button-prev">
+            <img class="nav-icon-left" src="/image/splash-left.svg" alt="" />
+          </div>
+          <div class="swiper-button-next">
+            <img class="nav-icon-right" src="/image/splash-right.svg" alt="" />
+          </div>
         </div>
-      </div>
+      </Transition>
     </div>
     <div class="book-shelf-content">
       <div class="radio-group">
@@ -113,18 +120,21 @@
           optionText="Ấn phẩm"
           :selectedOption="selectedOption"
           @update:selectedOption="updateSelectedOption"
+          color="#fff"
         />
         <RadioBtn
           id="2"
           optionText="Hình ảnh"
           :selectedOption="selectedOption"
           @update:selectedOption="updateSelectedOption"
+          color="#fff"
         />
         <RadioBtn
           id="3"
           optionText="Video"
           :selectedOption="selectedOption"
           @update:selectedOption="updateSelectedOption"
+          color="#fff"
         />
       </div>
     </div>
@@ -172,14 +182,26 @@
         />
       </Modal>
     </Transition>
-    <div class="left-ink-btn" @click="handleNavigate">
-      <img src="/image/map/back.svg" />
-      <h3>Quay lại</h3>
-    </div>
+    <Nav />
+    <router-link :to="{ name: 'detail', params: { id: route.params.id } }">
+      <img
+        style="
+          position: absolute;
+          bottom: 0px;
+          left: 120px;
+          width: 260px;
+          height: auto;
+        "
+        src="/image/detail/back.png"
+        alt=""
+        class="floor"
+      />
+    </router-link>
   </div>
 </template>
 
 <script>
+import Nav from "@/components/Nav.vue";
 import RadioBtn from "@/components/RadioBtn.vue";
 import InkDropButton from "@/components/InkDropButton.vue";
 import RightIcon from "@/components/icons/RightIcon.vue";
@@ -272,9 +294,6 @@ const openVideoDetail = (index) => {
   selectedVideoIndex.value = index;
   openVideoAlbum();
 };
-const handleNavigate = () => {
-  router.push({ name: "detail", params: { id: route.params.id } });
-};
 console.log();
 </script>
 
@@ -327,7 +346,7 @@ console.log();
         margin-top: 2rem;
       }
 
-      .book-shelf-video-icon{
+      .book-shelf-video-icon {
         position: absolute;
         top: 50%;
         left: 50%;
@@ -350,17 +369,21 @@ console.log();
 
   .book-shelf-content {
     position: absolute;
-    bottom: 5%;
+    bottom: 15%;
     left: 50%;
     transform: translateX(-50%);
-    width: 60%;
+    width: fit-content;
+    padding: 3rem 15rem;
     z-index: $priority-medium;
+    background: url("/image/book/radio-bg.png") no-repeat center
+      center/cover;
 
     .radio-group {
-      font-size: 5rem;
+      font-size: 3.4rem;
       display: flex;
       align-items: center;
-      justify-content: space-around;
+      justify-content: center;
+      gap: 10rem;
     }
 
     .book-shelf__img {

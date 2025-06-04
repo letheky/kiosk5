@@ -14,7 +14,7 @@
           :name="celeb.translations[store.lang].name"
           :image="celeb.image"
           :activeId="activeId"
-          @click="activeId = celeb.id"
+          :setActiveId="setActiveId"
         />
       </div>
     </div>
@@ -32,7 +32,7 @@
           :class="activeId !== celeb.id && 'deactive'"
           v-for="celeb in personStore.personList"
           :key="celeb.id"
-          @click="activeId = celeb.id"
+          @click="setActiveId(celeb.id)"
         >
           <h2>{{ celeb.translations[store.lang].name }}</h2>
           <p>{{ celeb.birth }} - {{ celeb.death }}</p>
@@ -63,6 +63,10 @@ const store = useStore();
 const personStore = usePerson();
 
 const activeId = ref(false);
+const setActiveId = (id) => {
+  activeId.value = id;
+};
+
 const celebList = ref([]);
 const timelineDetails = ref([]);
 
@@ -158,13 +162,14 @@ const handleNavigate = (id, callback) => {
     &:nth-of-type(1) {
       top: 54%;
       left: 2rem;
-      transform: translateY(-50%) rotateX(180deg) rotateZ(180deg);
       z-index: 999;
+      animation: rotatePrevious 1s ease-in-out forwards;
     }
     &:nth-of-type(2) {
       top: 54%;
       right: 2rem;
-      transform: translateY(-50%);
+      
+      animation: rotateNext 1s ease-in-out forwards;
     }
     &:nth-of-type(3) {
       width: 95%;
@@ -183,9 +188,7 @@ const handleNavigate = (id, callback) => {
     margin: 0 10rem;
 
     .timeline-item {
-      width: 30%;
-      min-width: 30%;
-      max-width: 30%;
+      width: 100%;
     }
   }
 
@@ -225,4 +228,23 @@ const handleNavigate = (id, callback) => {
     }
   }
 }
+
+@keyframes rotatePrevious {
+  0% {
+    transform: translateY(-50%) rotateX(0deg) rotateZ(0deg);
+  }
+  100% {
+    transform: translateY(-50%) rotateX(180deg) rotateZ(180deg);
+  }
+}
+
+@keyframes rotateNext {
+  0% {
+    transform: translateY(-50%) rotateX(-180deg) rotateZ(-180deg);
+  }
+  100% {
+    transform: translateY(-50%) rotateX(0deg) rotateZ(0deg);
+  }
+}
+
 </style>

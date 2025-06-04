@@ -21,35 +21,54 @@
         <img src="/image/tour/tour-pre.png" alt="" class="tour-pre" />
       </SwiperSlide>
     </Swiper>
-    <div class="left-ink-btn" @click="handleNavigate">
-      <img src="/image/map/back.svg" />
-      <h3>Quay lại</h3>
-    </div>
     <Transition name="fade">
       <Modal :modelValue="isOpen" @update:modelValue="isOpen = $event">
-        <iframe :src="iframeSrc" width="80%" height="80%"></iframe>
+        <iframe
+          :src="iframeSrc"
+          width="80%"
+          height="80%"
+          allow="xr-spatial-tracking; gyroscope; accelerometer; magnetometer; camera; microphone; fullscreen; autoplay"
+          allowvr
+          mozallowfullscreen
+          webkitallowfullscreen
+        >
+        </iframe>
         <InkDropButton class="close-ink-btn" @click="close">
           <CloseIcon color="#fff" />
         </InkDropButton>
       </Modal>
     </Transition>
+    <Nav />
+    <router-link :to="{ name: 'detail', params: { id: route.params.id } }">
+      <img
+        style="
+          position: absolute;
+          bottom: 0px;
+          left: 120px;
+          width: 260px;
+          height: auto;
+        "
+        src="/image/detail/back.png"
+        alt=""
+        class="floor"
+      />
+    </router-link>
   </div>
 </template>
 
 <script setup>
+import Nav from "@/components/Nav.vue";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { Navigation } from "swiper/modules";
 import Modal from "@/components/Modal.vue";
 import InkDropButton from "@/components/InkDropButton.vue";
 import CloseIcon from "@/components/icons/CloseIcon.vue";
 import usePersonDetail from "@/store/usePersonDetail";
-import { useRoute, useRouter } from "vue-router";
-import { computed } from "vue";
+import { useRoute } from "vue-router";
+import { ref, computed } from "vue";
 import useModal from "@/composables/useModal";
-import { ref } from "vue";
 
 const route = useRoute();
-const router = useRouter();
 const { isOpen, open, close } = useModal();
 const personDetailStore = usePersonDetail();
 const iframeSrc = ref(null);
@@ -65,14 +84,11 @@ const computedTourList = computed(() => {
   return result;
 });
 
-const handleNavigate = () => {
-  router.push({ name: "detail", params: { id: route.params.id } });
-};
-
 const openDetailTour = (tour) => {
   open();
   iframeSrc.value = tour.link;
 };
+
 </script>
 
 <style lang="scss" scoped>
@@ -82,7 +98,7 @@ const openDetailTour = (tour) => {
   background: url("/image/yellow-background.png") no-repeat center/cover;
   padding: 10rem;
 
-  .tour-heading{
+  .tour-heading {
     font-family: $primary-heading-family;
     font-size: 16rem;
     position: absolute;
@@ -115,7 +131,8 @@ const openDetailTour = (tour) => {
         position: relative;
 
         padding: 6rem;
-        background: url("/image/book/detail-book-bg.png") no-repeat center/contain;
+        background: url("/image/book/detail-book-bg.png") no-repeat
+          center/contain;
       }
     }
   }
@@ -139,7 +156,7 @@ const openDetailTour = (tour) => {
   .close-ink-btn {
     position: absolute;
     bottom: 0;
-    left: 50%;
+    left: 5%;
     transform: translateX(-50%);
     z-index: 9999;
     width: 20rem;

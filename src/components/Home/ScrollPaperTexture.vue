@@ -6,6 +6,8 @@
         collapse: animationState === 'collapsing',
         rotate: animationState === 'rotating',
         expand: animationState === 'expanding',
+        collapseSecond: animationState === 'collapseSecond',
+        goDown: animationState === 'goDown',
       }"
     >
       <img
@@ -27,12 +29,31 @@
         >
         <img src="/image/home/vignettebot.png" alt="" />
       </div>
-      <div class="background-image"></div>
+      <div class="scroll-new-texture">
+        <h1>Giới thiệu</h1>
+        <p>
+          Nho sĩ Thăng Long thời phong kiến là tầng lớp trí thức nắm giữ vai trò
+          quan trọng trong việc xây dựng, phát triển đất nước. Họ không chỉ giỏi
+          văn chương, thi cử mà còn đảm nhiệm các chức quan, góp phần định hình
+          chính sách, bảo vệ và phát huy văn hóa dân tộc. Những cái tên như Chu
+          Văn An, Lê Quý Đôn… tiêu biểu cho tinh thần yêu nước, đạo đức và học
+          vấn cao. Di sản tư tưởng, nhân cách và tinh thần cầu học của họ vẫn
+          còn ảnh hưởng đến giáo dục, đạo lý và lòng tự tôn dân tộc của người
+          Việt Nam ngày nay.
+        </p>
+        <div class="audio-container">
+          <Audio audioSrc="./audio/test-audio.mp3" />
+        </div>
+        <div class="btn-container">
+          <Button dynamicClass="btn-home" @click="navigate">Tiếp tục</Button>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+import Audio from "@/components/Audio.vue";
 import { defineComponent } from "vue";
 import Button from "@/components/Button.vue";
 
@@ -48,9 +69,8 @@ export default defineComponent({
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 
-const emit = defineEmits(["trigger-exit"]);
-
 const router = useRouter();
+const emit = defineEmits(["trigger-exit"]);
 
 // Animation states: 'idle', 'collapsing', 'rotating', 'expanding', 'revealing'
 const animationState = ref("idle");
@@ -64,13 +84,17 @@ const startAnimation = () => {
 
     setTimeout(() => {
       animationState.value = "expanding";
-
-      setTimeout(() => {
-        setTimeout(() => {
-          router.push("/timeline");
-        }, 1000);
-      }, 1500);
     }, 1500);
+  }, 2000);
+};
+
+const navigate = () => {
+  animationState.value = "collapseSecond";
+  setTimeout(() => {
+    animationState.value = "goDown";
+    setTimeout(() => {
+      router.push("/timeline");
+    }, 2000);
   }, 2000);
 };
 defineExpose({
@@ -106,9 +130,9 @@ defineExpose({
 // Rotation animation
 @keyframes rotateScroll {
   0% {
-    left: 57.2%;
+    left: 57.32%;
     top: 0%;
-    transform-origin: top;
+    transform-origin: center;
   }
   100% {
     transform: rotate(-90deg);
@@ -121,48 +145,82 @@ defineExpose({
 // Expansion animation
 @keyframes expandScroll {
   0% {
-    clip-path: inset(50% 0% 50% 0%);
-    transform: rotate(-90deg) scale(1);
+    clip-path: inset(45% 0% 45% 0%);
+    transform: rotate(-90deg) scaleY(1);
   }
   100% {
     clip-path: inset(0 0 0 0);
-    transform: rotate(-90deg) scale(2.5);
+    transform: rotate(-90deg) scaleY(1.5);
   }
 }
 @keyframes expandScrollTop {
   0% {
     left: 29%;
-    transform: scale(1) rotate(-90deg);
+    transform: rotate(-90deg);
   }
   100% {
-    left: -29%;
-    transform: scale(3) rotate(-90deg) translateY(-100%);
+    left: -3.5%;
+    transform: rotate(-90deg);
   }
 }
 @keyframes expandScrollBottom {
   0% {
-    left: calc(29% + 180px);
-    transform: scale(1) rotate(-90deg);
+    left: 29%;
+    transform: rotate(-90deg) translateY(50%);
   }
   100% {
-    left: calc(90% - 302px);
-    transform: scale(3) rotate(-90deg) translateY(100%);
+    left: 61.5%;
+    transform: rotate(-90deg) translateY(50%);
   }
 }
 
-// Background reveal animation (commented out for now)
-@keyframes revealBackground {
+@keyframes collapseSecondTop {
   0% {
-    opacity: 0;
-    background: url("/image/hoang-thanh-bg.png") no-repeat center center / cover;
-    z-index: 1000;
-    transform: scale(0);
+    top: 0;
+    left: -3.5%;
   }
   100% {
+    top: 29%;
+    left: 0;
+    transform: translateY(70%);
+  }
+}
+
+@keyframes collapseSecondBottom {
+  0% {
+    bottom: 0;
+    left: 0;
+  }
+  100% {
+    bottom: 29%;
+    left: 0;
+    transform: translateY(-70%);
+  }
+}
+
+@keyframes collapseSecondBody {
+  0% {
+    clip-path: inset(0 0 0 0);
+  }
+  100% {
+    clip-path: inset(50% 0% 50% 0%);
+  }
+}
+
+@keyframes displayNewTexture {
+  from {
+    opacity: 0;
+  }
+  to {
     opacity: 1;
-    background: url("/image/hoang-thanh-bg.png") no-repeat center center / cover;
-    z-index: 1000;
-    transform: scale(1);
+  }
+}
+@keyframes goDown {
+  from {
+    transform: rotate(-90deg);
+  }
+  to {
+    transform: rotate(-90deg) translateX(-110%);
   }
 }
 
@@ -215,7 +273,7 @@ defineExpose({
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    z-index: $priority-three;
+    z-index: $priority-four;
     transition: opacity 1s ease-in-out;
 
     h1 {
@@ -244,18 +302,44 @@ defineExpose({
       }
     }
   }
-
-  .background-image {
+  .scroll-new-texture {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 60%;
     height: 100%;
-    background-image: url("/image/home/scrollbody.png");
-    background-size: cover;
-    background-position: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: $priority-three;
+    transition: opacity 1s ease-in-out;
     opacity: 0;
-    z-index: 0;
+    h1 {
+      font-size: 26rem;
+      color: $light-dark-color;
+      font-family: $primary-heading-family;
+      text-align: center;
+      text-transform: uppercase;
+    }
+    p {
+      font-size: 4rem;
+      color: $light-dark-color;
+      font-family: $small-heading-family;
+      text-align: center;
+    }
+    .audio-container {
+      position: relative;
+      margin-top: 2rem;
+      width: 52rem;
+      height: 5rem;
+    }
+    .btn-container {
+      position: absolute;
+      bottom: 20%;
+      right: 0;
+    }
   }
 
   // Collapsing state
@@ -281,7 +365,6 @@ defineExpose({
   &.rotate {
     position: absolute;
     animation: rotateScroll 1.5s forwards;
-    animation-delay: 0s; // Start immediately after being applied
 
     // Keep the same dimensions during rotation
     .rolling-paper-body {
@@ -315,15 +398,15 @@ defineExpose({
     width: 100%;
 
     .rolling-paper-body {
-      animation: expandScroll 1.8s forwards;
+      animation: expandScroll 2s forwards;
       // animation-timing-function: ease-in-out;
     }
     .rolling-paper-top {
-      animation: expandScrollTop 2.5s forwards;
+      animation: expandScrollTop 2s forwards;
     }
 
     .rolling-paper-bottom {
-      animation: expandScrollBottom 2.5s forwards;
+      animation: expandScrollBottom 2s forwards;
     }
 
     .rolling-paper-top,
@@ -342,37 +425,70 @@ defineExpose({
         transform: rotate(-90deg);
       }
     }
+    .scroll-new-texture {
+      animation: displayNewTexture 1s forwards 2s;
+    }
+
+    .scroll-texture {
+      display: none;
+    }
+  }
+
+  &.collapseSecond {
+    position: absolute;
+    transform: rotate(-90deg);
+    left: 29%;
+    top: 0;
+    transform-origin: center;
+
+    .scroll-texture {
+      display: none;
+    }
+    .scroll-new-texture {
+      opacity: 0;
+      transition: opacity 0.5s ease-in-out;
+    }
+    .rolling-paper-top {
+      top: 0;
+      left: -3.5%;
+      animation: collapseSecondTop 2s forwards;
+    }
+
+    .rolling-paper-bottom {
+      animation: collapseSecondBottom 2s forwards;
+    }
+
+    .rolling-paper-body {
+      animation: collapseSecondBody 2s forwards;
+    }
+  }
+  &.goDown {
+    position: absolute;
+    left: 29%;
+    top: 0;
+    transform: rotate(-90deg) translateY(-50%);
 
     .scroll-texture {
       display: none;
     }
 
-    .background-image {
-      animation: revealBackground 2s forwards;
-      z-index: 1;
+    .rolling-paper-top {
+      top: 29%;
+      left: 0;
+      transform: translateY(70%);
     }
+
+    .rolling-paper-bottom {
+      bottom: 29%;
+      left: 0;
+      transform: translateY(-70%);
+    }
+
+    .rolling-paper-body {
+      clip-path: inset(50% 0% 50% 0%);
+    }
+
+    animation: goDown 2s forwards;
   }
-
-  // &.reveal {
-  //   position: absolute;
-  //   left: 0;
-  //   top: 0;
-  //   width: 100vw;
-  //   height: 100vh;
-  //   transform: none;
-
-  //   .rolling-paper-body {
-  //     transform: rotate(-90deg) scale(2.5);
-  //   }
-  //   .scroll-texture,
-  //   .rolling-paper-top,
-  //   .rolling-paper-bottom {
-  //     display: none;
-  //   }
-
-  //   .background-image {
-  //     animation: revealBackground 1s forwards;
-  //   }
-  // }
 }
 </style>

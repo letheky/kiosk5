@@ -1,6 +1,6 @@
 <template>
-  <div class="map-detail">
-    <!-- <img src="/image/map/vietnam-map.png" alt="" /> -->
+  <div ref="mapContainer" class="map-detail">
+    <img ref="mapImage" class="map-image" src="/image/map/vn-map.png" alt="" />
     <TransitionGroup name="position-fade">
       <div
         class="marker-position"
@@ -12,9 +12,7 @@
         }"
         @click="showDestinationModal(position)"
       >
-        <CustomMarker
-          :color="selectedOption === '1' ? '#BA1A1A' : '#36693E'"
-        />
+        <CustomMarker :color="selectedOption === '1' ? '#BA1A1A' : '#36693E'" />
       </div>
     </TransitionGroup>
     <div class="radio-group">
@@ -33,10 +31,7 @@
         color="#36693E"
       />
     </div>
-    <div class="left-ink-btn" @click="handleNavigate">
-      <img src="/image/map/back.svg" />
-      <h3>Quay lại</h3>
-    </div>
+
     <Transition name="modal-fade">
       <DestinationModal
         v-if="clickedPositionId"
@@ -46,14 +41,31 @@
         @close="clickedPositionId = null"
       />
     </Transition>
+
+    <Nav />
+    <router-link :to="{ name: 'detail', params: { id: route.params.id } }">
+      <img
+        style="
+          position: absolute;
+          bottom: 0px;
+          left: 120px;
+          width: 260px;
+          height: auto;
+        "
+        src="/image/detail/back.png"
+        alt=""
+        class="floor"
+      />
+    </router-link>
   </div>
 </template>
 <script>
+import Nav from "@/components/Nav.vue";
 import RadioBtn from "@/components/RadioBtn.vue";
 import DestinationModal from "@/components/Map/DestinationModal.vue";
 import CustomMarker from "@/components/CustomMarker.vue";
 
-import { ref, onMounted, computed, watch } from "vue";
+import { ref, onMounted, computed, watch, onUnmounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import usePersonDetail from "@/store/usePersonDetail";
 
@@ -92,9 +104,9 @@ const updateSelectedOption = (value) => {
 
 onMounted(async () => {
   roadPositionList.value =
-    personDetailStore.personDetail.article_topic[0].article_list;
+    personDetailStore.personDetail.position_folder[0].position_list;
   schoolPositionList.value =
-    personDetailStore.personDetail.article_topic[1].article_list;
+    personDetailStore.personDetail.position_folder[1].position_list;
 });
 
 const showDestinationModal = (position) => {
@@ -110,10 +122,7 @@ watch(
   }
 );
 
-// Handle navigate
-const handleNavigate = () => {
-  router.push({ name: "detail", params: { id: route.params.id } });
-};
+
 </script>
 
 <style lang="scss" scoped>
@@ -121,9 +130,12 @@ const handleNavigate = () => {
   position: relative;
   width: 100%;
   height: 100%;
-  background-image: url("/image/map/vn-map.png");
-  background-repeat: no-repeat;
-  background-size: cover;
+
+  .map-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
 
   .marker-position {
     position: absolute;

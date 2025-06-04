@@ -185,7 +185,7 @@ button {
 
 .swiper-wrapper {
   display: flex;
-  align-items: center;
+  /* align-items: center; */
   gap: 5rem;
   /* justify-content: center; */
 }

@@ -8,21 +8,21 @@
     </div>
     <div
       class="modal-desc"
-      v-html="destinationDetail.translations[store.lang].content"
+      v-html="destinationDetail.translations[store.lang].des"
     ></div>
     <div class="modal-asset">
       <div class="multimedia d-flex justify-content-between align-items-center">
         <div class="asset-media d-flex">
           <h2
-            v-if="destinationDetail.image_folder.length > 0"
+            v-if="destinationDetail?.image_folder?.length > 0"
             :class="{ active: selectedTab === 'image' }"
             @click="selectedTab = 'image'"
           >
             Hình ảnh
           </h2>
-          <hr v-if="destinationDetail.video_folder.length > 0" />
+          <hr v-if="destinationDetail?.video_folder?.length > 0" />
           <h2
-            v-if="destinationDetail.video_folder.length > 0"
+            v-if="destinationDetail?.video_folder?.length > 0"
             :class="{ active: selectedTab === 'video' }"
             @click="selectedTab = 'video'"
           >

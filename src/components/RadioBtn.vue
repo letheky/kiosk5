@@ -4,7 +4,7 @@
     <label :for="`radio${id}`" class="custom-radio" @click="updateOption">
       <CheckedRadio v-if="selectedOption === id" :color="color" />
       <UncheckedRadio v-else :color="color" />
-      <p>{{ optionText }}</p>
+      <p :style="{ color: color }">{{ optionText }}</p>
     </label>
   </div>
 </template>

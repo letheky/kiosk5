@@ -1,31 +1,48 @@
 <template>
   <div class="celeb-card">
     <div class="scroll-container">
-      <img
-        class="rolling-paper-top"
-        src="/image/home/rolling-paper-top.png"
-        alt=""
-      />
-      <div class="scroll-texture">
-        <img src="/image/home/vignettetop.png" alt="" />
+      <div
+        class="scroll-body"
+        :class="{
+          active: activeId === id,
+          inactive: clicked && activeId !== id,
+        }"
+        @click="handleClick"
+      >
+        <img
+          class="pattern-img"
+          src="/image/timeline/pattern-left.png"
+          alt=""
+        />
+        <img
+          class="pattern-img"
+          src="/image/timeline/pattern-right.png"
+          alt=""
+        />
+        <div class="celeb-image-container">
+          <img
+            class="celeb-image"
+            :src="image"
+            :style="{ display: image ? 'block' : 'none' }"
+            alt=""
+          />
+        </div>
         <h1>{{ name }}</h1>
         <Button
+          class="celeb-button"
           dynamicClass="btn-home"
           :path="{ name: 'detail', params: { id } }"
-          >Tìm hiểu</Button
+          style="z-index: 3"
         >
-        <img src="/image/home/vignettebot.png" alt="" />
+          Tìm hiểu
+        </Button>
       </div>
-      <img
-        class="rolling-paper-bottom"
-        src="/image/home/rolling-paper-bottom.png"
-        alt=""
-      />
     </div>
   </div>
 </template>
 
 <script setup>
+import { ref } from "vue";
 import Button from "@/components/Button.vue";
 
 const props = defineProps({
@@ -41,7 +58,22 @@ const props = defineProps({
     type: [Boolean, String],
     default: false,
   },
+  image: {
+    type: String,
+    required: true,
+  },
+  setActiveId: {
+    type: Function,
+    required: true,
+  },
 });
+
+const clicked = ref(false);
+
+const handleClick = () => {
+  clicked.value = true;
+  props.setActiveId(props.id);
+};
 </script>
 
 <style lang="scss">
@@ -58,67 +90,118 @@ const props = defineProps({
     height: 100%;
     width: 100%;
     display: flex;
-    align-items: center;
+    justify-content: center;
     z-index: $priority-high;
 
-    .rolling-paper-top {
-      position: absolute;
-      bottom: 12%;
-      left: 3%;
+    .scroll-body {
       width: 90%;
-      z-index: $priority-max;
-    }
-
-    .rolling-paper-bottom {
-      position: absolute;
-      top: 12%;
-      left: 3%;
-      z-index: $priority-max;
-      width: 90%;
-    }
-
-    .scroll-texture {
+      height: 80%;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      background: url("/image/home/scrollbody.png") no-repeat center
-        center/contain;
-      height: 100%;
-      width: 100%;
+      overflow: hidden;
+      background: url("/image/timeline/scroll-paper.png") no-repeat center/cover;
+      transition: all 1s ease-in-out;
+      animation: slideDown 1s ease-in-out;
+
+      .pattern-img {
+        position: absolute;
+        width: fit-content;
+        height: 39%;
+        // opacity: 0;
+        transition: all 1s ease-in-out;
+        &:nth-of-type(1) {
+          left: 12%;
+          transform: rotateY(90deg);
+        }
+        &:nth-of-type(2) {
+          right: 14%;
+          transform: rotateY(90deg);
+        }
+      }
 
       h1 {
         font-size: 12rem;
         color: $light-dark-color;
         font-family: $primary-heading-family;
         text-align: center;
-        text-transform: uppercase;
+        z-index: $priority-three;
       }
 
-      img {
-        filter: contrast(0.3);
-        -webkit-mask-repeat: no-repeat;
-        mask-repeat: no-repeat;
-        -webkit-mask-size: 100% 100%;
-        mask-size: 100% 100%;
+      .inactive-bg {
         position: absolute;
-        width: 80%;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        z-index: $priority-one;
+      }
+      .celeb-image-container {
+        width: 60%;
+        height: 66%;
+        z-index: $priority-two;
 
-        &:nth-of-type(1) {
-          top: 20%;
-          left: 8%;
-          -webkit-mask-image: linear-gradient(to top, transparent, black);
-          mask-image: linear-gradient(to top, transparent, black);
+        .celeb-image {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          mask-image: linear-gradient(
+            to right,
+            transparent,
+            black 40%,
+            black 60%,
+            transparent
+          );
         }
+      }
 
-        &:nth-of-type(2) {
-          bottom: 20%;
-          left: 8%;
-          -webkit-mask-image: linear-gradient(to bottom, transparent, black);
-          mask-image: linear-gradient(to bottom, transparent, black);
+      .celeb-button {
+        opacity: 0;
+        transform: scale(0);
+        transition: all 1s ease-in-out;
+        pointer-events: none;
+      }
+
+      &.active {
+        background: url("/image/timeline/scroll-paper-active.png") no-repeat
+          center/cover;
+        width: 100%;
+        height: 100%;
+        .celeb-button {
+          opacity: 1;
+          pointer-events: auto;
+          transform: scale(1);
+        }
+        .pattern-img {
+          opacity: 1;
+        }
+        .pattern-img:nth-of-type(1) {
+          transform: rotateY(0deg);
+        }
+        .pattern-img:nth-of-type(2) {
+          transform: rotateY(0deg);
+        }
+      }
+      &.inactive {
+        background: url("/image/timeline/scroll-paper.png") no-repeat center
+          center/cover;
+
+        .celeb-image-container {
+          .celeb-image {
+            filter: grayscale(100%);
+            opacity: 0.5;
+          }
         }
       }
     }
+  }
+}
+
+@keyframes slideDown {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(0);
   }
 }
 </style>
