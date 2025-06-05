@@ -129,7 +129,7 @@ const pathArr = [
   bottom: 2%;
   left: 50%;
   transform: translateX(-50%);
-  width: 50%;
+  width: 51%;
   height: 10%;
   display: flex;
   justify-content: space-around;

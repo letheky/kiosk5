@@ -1,19 +1,15 @@
 <template>
   <div class="map-detail">
-    <div 
-      ref="mapWrapper" 
+    <div
+      ref="mapWrapper"
       class="map-wrapper"
       :class="{ zoomed: zoomLevel > 1 }"
       @wheel.prevent="handleZoom"
-      @mousedown="startPan"
-      @mousemove="handlePan"
-      @mouseup="endPan"
-      @mouseleave="endPan"
     >
-      <img 
-        ref="mapImage" 
-        class="map-image" 
-        src="/image/map/vn-map.png" 
+      <img
+        ref="mapImage"
+        class="map-image"
+        src="/image/map/vn-map.png"
         alt=""
         :style="mapTransformStyle"
         draggable="false"
@@ -23,18 +19,17 @@
           class="marker-position"
           v-for="position in activePositionList"
           :key="position.id"
-          :style="{
-            '--xCoordinate': `${position?.coordinates.split(',')[0].trim()}%`,
-            '--yCoordinate': `${position?.coordinates.split(',')[1].trim()}%`,
-            transform: mapTransformStyle.transform,
-          }"
-          @click="showDestinationModal(position)"
+          :style="getMarkerStyle(position)"
+          :class="{ zooming: isZooming }"
+          @click.stop="showDestinationModal(position)"
         >
-          <CustomMarker :color="selectedOption === '1' ? '#BA1A1A' : '#36693E'" />
+          <CustomMarker
+            :color="selectedOption === '1' ? '#BA1A1A' : '#36693E'"
+          />
         </div>
       </TransitionGroup>
     </div>
-    
+
     <div class="radio-group">
       <RadioBtn
         id="1"
@@ -54,9 +49,26 @@
 
     <!-- Zoom Controls -->
     <div class="zoom-controls">
-      <button @click="zoomIn" class="zoom-btn">+</button>
-      <button @click="zoomOut" class="zoom-btn">−</button>
-      <button @click="resetZoom" class="zoom-btn reset">⌂</button>
+      <button @click="resetZoom" class="zoom-btn reset">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="40"
+          height="40"
+          viewBox="0 0 21 21"
+        >
+          <g
+            fill="none"
+            fill-rule="evenodd"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="1"
+          >
+            <path d="M3.578 6.487A8 8 0 1 1 2.5 10.5" />
+            <path d="M7.5 6.5h-4v-4" />
+          </g>
+        </svg>
+      </button>
     </div>
 
     <Transition name="modal-fade">
@@ -65,11 +77,15 @@
         :destinationDetail="
           activePositionList.find((el) => el.id === clickedPositionId)
         "
-        @close="clickedPositionId = null"
+        @close="clickedPositionId = null; resetZoom()"
       />
     </Transition>
 
-    <Nav />
+    <Transition name="fade" mode="out-in">
+      <div v-if="showNav">
+        <Nav />
+      </div>
+    </Transition>
     <router-link :to="{ name: 'detail', params: { id: route.params.id } }">
       <img
         style="
@@ -94,7 +110,7 @@ import DestinationModal from "@/components/Map/DestinationModal.vue";
 import CustomMarker from "@/components/CustomMarker.vue";
 
 import { ref, onMounted, computed, watch, onUnmounted } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { useRoute } from "vue-router";
 import usePersonDetail from "@/store/usePersonDetail";
 
 export default {
@@ -131,6 +147,7 @@ const panX = ref(0);
 const panY = ref(0);
 const isPanning = ref(false);
 const lastPanPoint = ref({ x: 0, y: 0 });
+const isZooming = ref(false);
 
 // Zoom configuration
 const MIN_ZOOM = 1;
@@ -141,11 +158,57 @@ const ZOOM_STEP = 0.2;
 const mapWrapper = ref(null);
 const mapImage = ref(null);
 
+// Add computed properties for map dimensions
+const mapDimensions = computed(() => {
+  if (!mapWrapper.value || !mapImage.value) return { width: 0, height: 0 };
+  return {
+    width: mapWrapper.value.clientWidth,
+    height: mapWrapper.value.clientHeight,
+  };
+});
+
+// Add computed property for marker positions
+const markerPositions = computed(() => {
+  const positions = new Map();
+
+  const calculatePosition = (position) => {
+    if (!position?.coordinates) return { x: 0, y: 0 };
+    const [xPercent, yPercent] = position.coordinates
+      .split(",")
+      .map((coord) => parseFloat(coord.trim()));
+    const x = (xPercent / 100) * mapDimensions.value.width;
+    const y = (yPercent / 100) * mapDimensions.value.height;
+    return { x, y };
+  };
+
+  // Calculate positions for both lists
+  [...roadPositionList.value, ...schoolPositionList.value].forEach(
+    (position) => {
+      positions.set(position.id, calculatePosition(position));
+    }
+  );
+
+  return positions;
+});
+
+// Update the template to use the computed positions
+const getMarkerStyle = (position) => {
+  const pos = markerPositions.value.get(position.id);
+  return {
+    top: `${panY.value}px`,
+    left: `${panX.value}px`,
+    transform: `translate(${pos.x * zoomLevel.value}px, ${
+      pos.y * zoomLevel.value
+    }px) `,
+    transformOrigin: "center",
+  };
+};
+
 // Computed transform style
 const mapTransformStyle = computed(() => ({
   transform: `translate(${panX.value}px, ${panY.value}px) scale(${zoomLevel.value})`,
-  transformOrigin: 'top left',
-  transition: isPanning.value ? 'none' : 'transform 0.2s ease-out'
+  transformOrigin: "top left",
+  transition: isPanning.value ? "none" : "transform 0.2s ease-out",
 }));
 
 // Method to update `selectedOption`
@@ -167,7 +230,15 @@ const handleZoom = (event) => {
 
   // Determine zoom direction
   const zoomDirection = event.deltaY > 0 ? -1 : 1;
-  const newZoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, zoomLevel.value + (zoomDirection * ZOOM_STEP)));
+  const newZoom = Math.max(
+    MIN_ZOOM,
+    Math.min(MAX_ZOOM, zoomLevel.value + zoomDirection * ZOOM_STEP)
+  );
+
+  // Only show animation if we're not at min or max zoom
+  if (newZoom !== MIN_ZOOM && newZoom !== MAX_ZOOM) {
+    isZooming.value = true;
+  }
 
   // Calculate new pan to keep the mouse point stable
   const newPanX = mouseX - imagePointX * newZoom;
@@ -177,43 +248,48 @@ const handleZoom = (event) => {
   panX.value = newPanX;
   panY.value = newPanY;
   clampPan();
+
+  // Reset zooming state after transition
+  setTimeout(() => {
+    isZooming.value = false;
+  }, 200);
 };
 
-const zoomIn = () => {
-  if (!mapWrapper.value) return;
-  
-  const rect = mapWrapper.value.getBoundingClientRect();
-  const centerX = rect.width / 2;
-  const centerY = rect.height / 2;
-  
-  const imagePointX = (centerX - panX.value) / zoomLevel.value;
-  const imagePointY = (centerY - panY.value) / zoomLevel.value;
-  
-  const newZoom = Math.min(MAX_ZOOM, zoomLevel.value + ZOOM_STEP);
-  
-  panX.value = centerX - imagePointX * newZoom;
-  panY.value = centerY - imagePointY * newZoom;
-  zoomLevel.value = newZoom;
-  clampPan();
-};
+// const zoomIn = () => {
+//   if (!mapWrapper.value) return;
 
-const zoomOut = () => {
-  if (!mapWrapper.value) return;
-  
-  const rect = mapWrapper.value.getBoundingClientRect();
-  const centerX = rect.width / 2;
-  const centerY = rect.height / 2;
-  
-  const imagePointX = (centerX - panX.value) / zoomLevel.value;
-  const imagePointY = (centerY - panY.value) / zoomLevel.value;
-  
-  const newZoom = Math.max(MIN_ZOOM, zoomLevel.value - ZOOM_STEP);
-  
-  panX.value = centerX - imagePointX * newZoom;
-  panY.value = centerY - imagePointY * newZoom;
-  zoomLevel.value = newZoom;
-  clampPan();
-};
+//   const rect = mapWrapper.value.getBoundingClientRect();
+//   const centerX = rect.width / 2;
+//   const centerY = rect.height / 2;
+
+//   const imagePointX = (centerX - panX.value) / zoomLevel.value;
+//   const imagePointY = (centerY - panY.value) / zoomLevel.value;
+
+//   const newZoom = Math.min(MAX_ZOOM, zoomLevel.value + ZOOM_STEP);
+
+//   panX.value = centerX - imagePointX * newZoom;
+//   panY.value = centerY - imagePointY * newZoom;
+//   zoomLevel.value = newZoom;
+//   clampPan();
+// };
+
+// const zoomOut = () => {
+//   if (!mapWrapper.value) return;
+
+//   const rect = mapWrapper.value.getBoundingClientRect();
+//   const centerX = rect.width / 2;
+//   const centerY = rect.height / 2;
+
+//   const imagePointX = (centerX - panX.value) / zoomLevel.value;
+//   const imagePointY = (centerY - panY.value) / zoomLevel.value;
+
+//   const newZoom = Math.max(MIN_ZOOM, zoomLevel.value - ZOOM_STEP);
+
+//   panX.value = centerX - imagePointX * newZoom;
+//   panY.value = centerY - imagePointY * newZoom;
+//   zoomLevel.value = newZoom;
+//   clampPan();
+// };
 
 const resetZoom = () => {
   zoomLevel.value = 1;
@@ -222,40 +298,107 @@ const resetZoom = () => {
   clampPan();
 };
 
-// Pan methods
+// Pan methods - Improved event handling
 const startPan = (event) => {
-  if (event.button !== 0) return; // Only left mouse button
+  if (event.type === "mousedown" && event.button !== 0) return; // Only left mouse button
+  if (zoomLevel.value <= 1) return; // Only allow pan when zoomed in
+
+  // Check if we're clicking on a marker
+  const target = event.target;
+  if (target.closest(".marker-position")) {
+    return; // Don't start pan if clicking on a marker
+  }
+
+  event.preventDefault();
   isPanning.value = true;
-  lastPanPoint.value = { x: event.clientX, y: event.clientY };
-  document.body.style.cursor = 'grabbing';
+
+  const clientX =
+    event.clientX || (event.touches && event.touches[0]?.clientX) || 0;
+  const clientY =
+    event.clientY || (event.touches && event.touches[0]?.clientY) || 0;
+
+  lastPanPoint.value = { x: clientX, y: clientY };
+  document.body.style.cursor = "grabbing";
+
+  // Add global event listeners
+  document.addEventListener("mousemove", handlePan, { passive: false });
+  document.addEventListener("mouseup", endPan);
+  document.addEventListener("touchmove", handlePan, { passive: false });
+  document.addEventListener("touchend", endPan);
 };
 
 const handlePan = (event) => {
-  if (!isPanning.value) return;
-  
-  const deltaX = event.clientX - lastPanPoint.value.x;
-  const deltaY = event.clientY - lastPanPoint.value.y;
-  
+  if (!isPanning.value || zoomLevel.value <= 1) return;
+
+  event.preventDefault();
+
+  const clientX =
+    event.clientX || (event.touches && event.touches[0]?.clientX) || 0;
+  const clientY =
+    event.clientY || (event.touches && event.touches[0]?.clientY) || 0;
+
+  const deltaX = clientX - lastPanPoint.value.x;
+  const deltaY = clientY - lastPanPoint.value.y;
+
   panX.value += deltaX;
   panY.value += deltaY;
-  
-  lastPanPoint.value = { x: event.clientX, y: event.clientY };
+
+  lastPanPoint.value = { x: clientX, y: clientY };
   clampPan();
 };
 
-const endPan = () => {
+const endPan = (event) => {
   isPanning.value = false;
-  document.body.style.cursor = '';
+  document.body.style.cursor = "";
+
+  // Remove global event listeners
+  document.removeEventListener("mousemove", handlePan);
+  document.removeEventListener("mouseup", endPan);
+  document.removeEventListener("touchmove", handlePan);
+  document.removeEventListener("touchend", endPan);
 };
 
+// Setup event listeners when component mounts
 onMounted(async () => {
-  roadPositionList.value =
-    personDetailStore.personDetail.position_folder[0].position_list;
   schoolPositionList.value =
+    personDetailStore.personDetail.position_folder[0].position_list;
+  roadPositionList.value =
     personDetailStore.personDetail.position_folder[1].position_list;
+
+  // Add event listeners to the map wrapper
+  if (mapWrapper.value) {
+    // Mouse events
+    mapWrapper.value.addEventListener("mousedown", startPan, {
+      passive: false,
+    });
+
+    // Touch events for mobile support
+    mapWrapper.value.addEventListener("touchstart", startPan, {
+      passive: false,
+    });
+  }
 });
 
 const showDestinationModal = (position) => {
+  // Get the marker position
+  const pos = markerPositions.value.get(position.id);
+  if (!pos) return;
+
+  // Set zoom level
+  zoomLevel.value = 5;
+
+  // Calculate the center point of the map wrapper
+  const wrapperRect = mapWrapper.value.getBoundingClientRect();
+  const centerX = wrapperRect.width / 2;
+  const centerY = wrapperRect.height / 2;
+
+  // Calculate the new pan position to center the marker
+  panX.value = centerX - pos.x * zoomLevel.value;
+  panY.value = centerY - pos.y * zoomLevel.value;
+
+  // Ensure pan is clamped within bounds
+  clampPan();
+
   clickedPositionId.value = position.id;
 };
 
@@ -268,9 +411,21 @@ watch(
   }
 );
 
-// Clean up cursor style on unmount
+// Clean up event listeners and cursor style on unmount
 onUnmounted(() => {
-  document.body.style.cursor = '';
+  document.body.style.cursor = "";
+
+  // Remove any remaining global listeners
+  document.removeEventListener("mousemove", handlePan);
+  document.removeEventListener("mouseup", endPan);
+  document.removeEventListener("touchmove", handlePan);
+  document.removeEventListener("touchend", endPan);
+
+  // Remove local listeners
+  if (mapWrapper.value) {
+    mapWrapper.value.removeEventListener("mousedown", startPan);
+    mapWrapper.value.removeEventListener("touchstart", startPan);
+  }
 });
 
 function clampPan() {
@@ -297,6 +452,8 @@ function clampPan() {
   panX.value = Math.min(maxPanX, Math.max(minPanX, panX.value));
   panY.value = Math.min(maxPanY, Math.max(minPanY, panY.value));
 }
+
+const showNav = computed(() => zoomLevel.value <= 1);
 </script>
 
 <style lang="scss" scoped>
@@ -311,7 +468,11 @@ function clampPan() {
     width: 100%;
     height: 100%;
     overflow: hidden;
+    cursor: grab;
 
+    &.zoomed {
+      cursor: grab;
+    }
   }
 
   .map-image {
@@ -320,25 +481,19 @@ function clampPan() {
     object-fit: cover;
     user-select: none;
     pointer-events: none;
+    touch-action: none; /* Prevent default touch behaviors */
   }
 
   .marker-position {
     position: absolute;
-    left: var(--xCoordinate);
-    top: var(--yCoordinate);
     transform-origin: center;
-    pointer-events: auto;
     cursor: pointer;
     z-index: 10;
+    touch-action: none;
+    pointer-events: auto;
 
-    // Adjust marker position based on map transform
-    &::before {
-      content: '';
-      position: absolute;
-      left: -50%;
-      top: -50%;
-      width: 100%;
-      height: 100%;
+    &.zooming {
+      opacity: 0;
     }
   }
 
@@ -363,13 +518,13 @@ function clampPan() {
     z-index: 20;
 
     .zoom-btn {
-      width: 40px;
-      height: 40px;
+      width: 6rem;
+      height: 6rem;
       border: none;
       border-radius: 6px;
       background: rgba(255, 255, 255, 0.9);
       color: #333;
-      font-size: 18px;
+      font-size: 4rem;
       font-weight: bold;
       cursor: pointer;
       display: flex;
@@ -400,7 +555,7 @@ function clampPan() {
     bottom: 5%;
     left: 3%;
     z-index: 20;
-    
+
     h3 {
       font-size: 4rem;
     }

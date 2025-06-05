@@ -1,7 +1,10 @@
 //GET path for kisok
+export const GET_ALL_KIOSK = "/api/app_kiosk/kiosk/?page_size=9999999";
 export const GET_PAGE_FOLDER_DETAIL_BY_ID = "/api/app_kiosk/page-folder/";
 
-//GET path for album
+//GET path for article
+export const GET_ARTICLE_TOPIC = "/api/app_article/topic/";
+export const GET_ARTICLE_BY_ID = "/api/app_article/article/";
 
 //unused -> waiting for future update
 export const GET_AUDIO_LIST_BY_ID = "/api/app_album/audio-folder/";

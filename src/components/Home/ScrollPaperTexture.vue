@@ -31,24 +31,25 @@
       </div>
       <div class="scroll-new-texture">
         <h1>Giới thiệu</h1>
-        <p>
-          Nho sĩ Thăng Long thời phong kiến là tầng lớp trí thức nắm giữ vai trò
-          quan trọng trong việc xây dựng, phát triển đất nước. Họ không chỉ giỏi
-          văn chương, thi cử mà còn đảm nhiệm các chức quan, góp phần định hình
-          chính sách, bảo vệ và phát huy văn hóa dân tộc. Những cái tên như Chu
-          Văn An, Lê Quý Đôn… tiêu biểu cho tinh thần yêu nước, đạo đức và học
-          vấn cao. Di sản tư tưởng, nhân cách và tinh thần cầu học của họ vẫn
-          còn ảnh hưởng đến giáo dục, đạo lý và lòng tự tôn dân tộc của người
-          Việt Nam ngày nay.
-        </p>
+        <div
+          class="article-content"
+          v-html="processedHtml"
+          @click="handleLinkClick"
+        ></div>
         <div class="audio-container">
-          <Audio audioSrc="./audio/test-audio.mp3" />
+          <Audio :audioSrc="introduceArticle?.audioLink" />
         </div>
         <div class="btn-container">
           <Button dynamicClass="btn-home" @click="navigate">Tiếp tục</Button>
         </div>
       </div>
     </div>
+    <ModalLv2
+      :isModalOpen="isModalOpen"
+      :modalId="modalContentId"
+      :closeModal="closeModal"
+    >
+    </ModalLv2>
   </div>
 </template>
 
@@ -56,6 +57,7 @@
 import Audio from "@/components/Audio.vue";
 import { defineComponent } from "vue";
 import Button from "@/components/Button.vue";
+import ModalLv2 from "@/components/ModalLv2.vue";
 
 export default defineComponent({
   name: "ScrollPaperTexture",
@@ -66,14 +68,22 @@ export default defineComponent({
 </script>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { useRouter } from "vue-router";
+import { fetchIntroduceArticle } from "@/api/fetch";
+import useStore from "@/store/useStore";
+import { useModalLinks } from "@/composables/useModalLink";
 
 const router = useRouter();
 const emit = defineEmits(["trigger-exit"]);
-
+const store = useStore();
 // Animation states: 'idle', 'collapsing', 'rotating', 'expanding', 'revealing'
 const animationState = ref("idle");
+const introduceArticle = ref(null);
+onMounted(async () => {
+  const res = await fetchIntroduceArticle(store);
+  introduceArticle.value = res;
+});
 
 const startAnimation = () => {
   animationState.value = "collapsing";
@@ -99,6 +109,31 @@ const navigate = () => {
 };
 defineExpose({
   startAnimation,
+});
+
+// Define the initial HTML string
+const {
+  isModalOpen,
+  modalContentId,
+  openModal,
+  closeModal,
+  convertLinksForModal,
+} = useModalLinks();
+const handleLinkClick = (event) => {
+  const modalLink = event.target.closest(".modal-link");
+  if (modalLink) {
+    const modalId = modalLink.getAttribute("data-modal-id");
+    openModal(modalId);
+  }
+};
+
+// Use a computed property to ensure the HTML is transformed reactive
+const processedHtml = computed(() => {
+  if (introduceArticle.value) {
+    return convertLinksForModal(
+      introduceArticle.value.translations[store.lang].content
+    );
+  }
 });
 </script>
 
@@ -323,7 +358,7 @@ defineExpose({
       text-align: center;
       text-transform: uppercase;
     }
-    p {
+    .article-content {
       font-size: 4rem;
       color: $light-dark-color;
       font-family: $small-heading-family;
@@ -490,5 +525,28 @@ defineExpose({
 
     animation: goDown 2s forwards;
   }
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  max-width: 500px;
+  width: 90%;
+  text-align: center;
 }
 </style>

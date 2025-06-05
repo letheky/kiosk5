@@ -7,7 +7,7 @@
           active: activeId === id,
           inactive: clicked && activeId !== id,
         }"
-        @click="handleClick"
+        @click="handleClickCard"
       >
         <img
           class="pattern-img"
@@ -66,12 +66,20 @@ const props = defineProps({
     type: Function,
     required: true,
   },
+  handleClick: {
+    type: Function,
+    required: true,
+  },
+  clicked: {
+    type: Boolean,
+    required: true,
+  },
 });
 
-const clicked = ref(false);
 
-const handleClick = () => {
-  clicked.value = true;
+
+const handleClickCard = () => {
+  props.handleClick();
   props.setActiveId(props.id);
 };
 </script>

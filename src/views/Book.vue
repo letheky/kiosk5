@@ -6,7 +6,9 @@
         <div v-if="selectedOption === '1' && computedDocumentList">
           <h3 class="media-title">Thư viện ấn phẩm</h3>
           <Swiper
-            :slides-per-view="3"
+            :slides-per-view="
+              computedDocumentList.length > 3 ? 3 : computedDocumentList.length
+            "
             navigation
             :modules="[Navigation]"
             class="media-swiper"
@@ -28,7 +30,11 @@
         <div v-else-if="selectedOption === '2'">
           <h3 class="media-title">Thư viện hình ảnh</h3>
           <Swiper
-            :slides-per-view="3"
+            :slides-per-view="
+              personDetailStore.personDetail.image_folder.length > 3
+                ? 3
+                : personDetailStore.personDetail.image_folder.length
+            "
             :navigation="{
               nextEl: '.swiper-button-next',
               prevEl: '.swiper-button-prev',
@@ -47,7 +53,10 @@
                 <img
                   class="book-shelf-album"
                   :src="
-                    el.image || el.thumbnail || personDetailStore.personDetail.image_folder[index].image_list[0].thumbnail
+                    el.image ||
+                    el.thumbnail ||
+                    personDetailStore.personDetail.image_folder[index]
+                      .image_list[0].thumbnail
                   "
                   alt=""
                   @click="openAlbumDetail(index)"
@@ -66,7 +75,9 @@
         <div v-else>
           <h3 class="media-title">Thư viện video</h3>
           <Swiper
-            :slides-per-view="3"
+            :slides-per-view="
+              computedAudiolist.length > 3 ? 3 : computedAudiolist.length
+            "
             :navigation="{
               nextEl: '.swiper-button-next',
               prevEl: '.swiper-button-prev',
@@ -309,7 +320,7 @@ console.log();
     font-family: $primary-heading-family;
     font-size: 14rem;
     text-align: center;
-    margin-bottom: 30rem;
+    margin-bottom: 10rem;
   }
   .media-content {
     position: absolute;
@@ -375,8 +386,7 @@ console.log();
     width: fit-content;
     padding: 3rem 15rem;
     z-index: $priority-medium;
-    background: url("/image/book/radio-bg.png") no-repeat center
-      center/cover;
+    background: url("/image/book/radio-bg.png") no-repeat center center/cover;
 
     .radio-group {
       font-size: 3.4rem;

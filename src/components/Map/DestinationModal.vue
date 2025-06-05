@@ -114,8 +114,9 @@ const handleImageLoaded = (index) => {
 <style lang="scss" scoped>
 .destination-modal {
   position: absolute;
-  bottom: 4%;
-  left: 49%;
+  bottom: 10%;
+  left: 20%;
+  // transform: translateX(-50%);
   width: 30%;
   height: 35%;
   background-color: #f7ecdf;
@@ -123,6 +124,7 @@ const handleImageLoaded = (index) => {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  z-index: $priority-super;
 
   .modal-heading {
     h1 {

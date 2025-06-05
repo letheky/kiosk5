@@ -1,6 +1,9 @@
 import axios from "axios";
 // import { getShortestPath, extractText } from "../utils/utils";
 import {
+  GET_ALL_KIOSK,
+  GET_PAGE_FOLDER_DETAIL_BY_ID,
+  GET_ARTICLE_TOPIC,
   GET_ALL_PERSON_GROUP,
   GET_PERSON_GROUP_BY_ID,
   GET_IMAGE_LIST_BY_ID,
@@ -10,8 +13,39 @@ import {
   GET_TOUR_LIST_BY_ID,
   GET_AUDIO_LIST_BY_ID,
   GET_VIDEO_LIST_BY_ID,
+  GET_ARTICLE_BY_ID,
 } from "@/api/const";
 
+export const fetchIntroduceArticle = async (store) => {
+  try {
+    const kioskRes = await axios.get(store.api + GET_ALL_KIOSK);
+    const pageFolderId = kioskRes.data.results[4].page_folder;
+    const pageFolderRes = await axios.get(
+      store.api + GET_PAGE_FOLDER_DETAIL_BY_ID + pageFolderId + "/"
+    );
+    const introduceTopicId = pageFolderRes.data.page_list[0].article_topic[0];
+    const articleTopicRes = await axios.get(
+      store.api + GET_ARTICLE_TOPIC + introduceTopicId + "/"
+    );
+    const introduceArticle = articleTopicRes.data.article_list[0];
+    const audioLink = await fetchPersonAudio(store, introduceArticle.audio_folder[0]);
+    return {
+      ...introduceArticle,
+      audioLink,
+    };
+  } catch (error) {
+    console.error("Unexpected error fetching markers:", error);
+  }
+};
+
+export const fetchArticleById = async (store, articleId) => {
+  try {
+    const articleRes = await axios.get(store.api + GET_ARTICLE_BY_ID + articleId + "/");
+    return articleRes.data;
+  } catch (error) {
+    console.error("Unexpected error fetching article:", error);
+  }
+};
 export const fetchPersonInfo = async (store, personStore) => {
   try {
     /**

@@ -9,8 +9,9 @@
       <div
         class="celeb-detail-story"
         style="text-align: justify"
-        v-html="currentCeleb.translations[store.lang].story"
-      ></div>
+        v-html="processedHtml"
+        @click="handleLinkClick"
+      />
       <Audio :audioSrc="audioSrc" />
     </div>
     <Nav />
@@ -28,10 +29,17 @@
         class="floor"
       />
     </router-link>
+    <ModalLv2
+      :isModalOpen="isModalOpen"
+      :modalId="modalContentId"
+      :closeModal="closeModal"
+    >
+    </ModalLv2>
   </div>
 </template>
 
 <script>
+import ModalLv2 from "@/components/ModalLv2.vue";
 import Nav from "@/components/Nav.vue";
 import Audio from "@/components/Audio.vue";
 import { ref, computed } from "vue";
@@ -41,6 +49,7 @@ import usePersonDetail from "@/store/usePersonDetail";
 import { useRoute } from "vue-router";
 import { onMounted } from "vue";
 import { fetchPersonById } from "@/api/fetch";
+import { useModalLinks } from "@/composables/useModalLink";
 
 export default {
   name: "Detail",
@@ -68,6 +77,31 @@ onMounted(async () => {
     personDetailStore.personDetail.audio_folder[0].audio_list[0].translations[
       store.lang
     ].file;
+});
+
+// Handle lv2 modal
+const {
+  isModalOpen,
+  modalContentId,
+  openModal,
+  closeModal,
+  convertLinksForModal,
+} = useModalLinks();
+const handleLinkClick = (event) => {
+  const modalLink = event.target.closest(".modal-link");
+  if (modalLink) {
+    const modalId = modalLink.getAttribute("data-modal-id");
+    openModal(modalId);
+  }
+};
+
+// Use a computed property to ensure the HTML is transformed reactive
+const processedHtml = computed(() => {
+  if (currentCeleb.value) {
+    return convertLinksForModal(
+      currentCeleb.value.translations[store.lang].story
+    );
+  }
 });
 </script>
 
@@ -135,7 +169,6 @@ onMounted(async () => {
       }
     }
   }
-  
 }
 .lv2 {
   position: absolute;
@@ -163,5 +196,4 @@ onMounted(async () => {
     bottom: 100px;
   }
 }
-
 </style>

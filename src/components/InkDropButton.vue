@@ -23,7 +23,7 @@ export default {
   props: {
     text: {
       type: String,
-      required: true,
+      
     },
     path: {
       type: [String, Object],

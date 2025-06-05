@@ -3,6 +3,13 @@ import { onMounted, ref } from "vue";
 import axios from "axios";
 import useStore from "@/store/useStore.js";
 import Menu from "./components/menu.vue";
+import { useIdleRedirect } from "@/composables/useIdleRedirect";
+/**
+ * !This line used to redirect the user to the home page if they are idle for 30 seconds
+ * !Time is set to 30 minutes after the screen is idle
+ */
+const idleRedirect = useIdleRedirect(1800000, "/");
+
 
 const store = useStore();
 const status = ref(false);

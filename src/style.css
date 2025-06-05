@@ -83,7 +83,7 @@ a,
 label {
   margin: 0;
   /* color: var(--color-2); */
-  color: #2f1500;
+  color: #000;
   text-decoration: none !important;
   font-size: 4rem;
 }
@@ -189,6 +189,28 @@ button {
   gap: 5rem;
   /* justify-content: center; */
 }
+
+
+/* Parsed html string carry hr for displaying flex layout */
+.modal-lv2-flex-container {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.modal-lv2-flex-column {
+  flex: 1;
+  min-width: 250px;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.modal-lv2-flex-column img {
+  width: 100% !important;
+  height: auto;
+}
+
 
 @media screen and (min-width: 480px) {
   html {

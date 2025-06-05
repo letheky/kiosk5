@@ -15,6 +15,8 @@
           :image="celeb.image"
           :activeId="activeId"
           :setActiveId="setActiveId"
+          :handleClick="handleClick"
+          :clicked="clicked"
         />
       </div>
     </div>
@@ -141,6 +143,12 @@ watch(activeId, (newActiveId) => {
 const handleNavigate = (id, callback) => {
   const currentIndex = personStore.personList.findIndex((el) => el.id === id);
   celebList.value = callback(personStore.personList, currentIndex);
+};
+
+const clicked = ref(false);
+
+const handleClick = () => {
+  clicked.value = true;
 };
 </script>
 
